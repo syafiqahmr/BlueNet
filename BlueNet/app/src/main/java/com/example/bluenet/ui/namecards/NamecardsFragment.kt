@@ -1,28 +1,27 @@
 package com.example.bluenet.ui.namecards
 
-import android.content.Context
-import android.media.Image
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentNamecardsBinding
 
+
 class NamecardsFragment : Fragment() {
 
-    private lateinit var namecardsViewModel: NamecardsViewModel
     private lateinit var lvNamecards: ListView
+    private var role = "All roles"
+    private var industry = "All industries"
 
     // TODO: Link to actual data
-    private var names = R.array.namecardName
-    private var companies = R.array.namecardCompany
-    private var images = arrayOf(R.drawable.person1, R.drawable.person2)
+    private var arrNamecard: ArrayList<Namecard> = ArrayList()
 
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
     private lateinit var fragmentNamecardsBinding: FragmentNamecardsBinding
@@ -32,21 +31,13 @@ class NamecardsFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        namecardsViewModel =
-                ViewModelProvider(this).get(NamecardsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_namecards, container, false)
-//        val textView: TextView = root.findViewById(R.id.text_notifications)
-//        namecardsViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
-//        })
-        return root
+        return inflater.inflate(R.layout.fragment_namecards, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentNamecardsBinding = FragmentNamecardsBinding.bind(view)
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -54,11 +45,10 @@ class NamecardsFragment : Fragment() {
 
         initialiseSpinner()
 
+        // Initalise fake namecards data
         lvNamecards = fragmentNamecardsBinding.lvNamecards
-        var arrNamecard: ArrayList<Namecard> = ArrayList()
-        arrNamecard.add(Namecard("Person1", "Company1", R.drawable.person1))
-        arrNamecard.add(Namecard("Person2", "Company2", R.drawable.person2))
-
+        arrNamecard.add(Namecard("Person1", "Company1", R.drawable.person1, "Finance", "Entrepreneur"))
+        arrNamecard.add(Namecard("Person2", "Company2", R.drawable.person2, "Technology", "Venture Capitalist"))
         lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
 
     }
@@ -67,7 +57,6 @@ class NamecardsFragment : Fragment() {
         val spinnerIndustry = fragmentNamecardsBinding.spinnerIndustry
         val spinnerRole = fragmentNamecardsBinding.spinnerRole
 
-        // Initialise spinner
         this.activity?.let {
             // Initialise industry spinner
             ArrayAdapter.createFromResource(
@@ -93,9 +82,53 @@ class NamecardsFragment : Fragment() {
                 spinnerRole?.adapter = adapter
             }
         }
+
+        // set event listener for industry spinner
+        spinnerRole.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                role = parentView?.getItemAtPosition(position).toString()
+                applyFilter()
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+                role = "All roles"
+                applyFilter()
+            }
+        })
+
+        // set event listener for role spinner
+        spinnerIndustry.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                industry = parentView?.getItemAtPosition(position).toString()
+                applyFilter()
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+                role = "All industries"
+                applyFilter()
+            }
+        })
+
     }
 
-
+    private fun applyFilter(){
+        if (role == "All roles" && industry == "All industries"){
+            lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
+        } else {
+            var arrNamecardFiltered: ArrayList<Namecard> = ArrayList()
+            for (namecard in arrNamecard){
+                if (namecard.role == role && namecard.industry == industry){
+                    arrNamecardFiltered.add(namecard)
+                } else if (namecard.role == role && industry == "All industries"){
+                    arrNamecardFiltered.add(namecard)
+                } else if (namecard.industry == industry && role == "All roles"){
+                    arrNamecardFiltered.add(namecard)
+                }
+            }
+            lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecardFiltered) }
+        }
+    }
 }
+
 
 

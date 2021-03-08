@@ -52,11 +52,15 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         var tvName: TextView
         var tvCompany: TextView
         var image: ImageView
+        var tvIndustry: TextView
+        var tvRole: TextView
 
         init{
             this.tvName = row?.findViewById(R.id.textViewName) as TextView
             this.tvCompany = row?.findViewById(R.id.textViewCompany) as TextView
             this.image = row?.findViewById(R.id.imageView) as ImageView
+            this.tvRole = row?.findViewById(R.id.textViewRole) as TextView
+            this.tvIndustry = row?.findViewById(R.id.textViewIndustry) as TextView
         }
     }
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
@@ -77,6 +81,8 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         viewHolder.tvCompany.text = namecard.company
         viewHolder.tvName.text = namecard.name
         viewHolder.image.setImageResource(namecard.image)
+        viewHolder.tvIndustry.text = namecard.industry
+        viewHolder.tvRole.text = namecard.role
 
         return view as View
     }
