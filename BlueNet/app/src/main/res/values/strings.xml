@@ -3,13 +3,23 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_namecards">Namecards</string>
 
     <string-array name="industries">
+        <item>All industries</item>
         <item>Finance</item>
         <item>Technology</item>
         <item>Healthcare</item>
         <item>Education</item>
     </string-array>
+
+    <string-array name="roles">
+        <item>All roles</item>
+        <item>Entrepreneur</item>
+        <item>Venture Capitalist</item>
+        <item>Researcher</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

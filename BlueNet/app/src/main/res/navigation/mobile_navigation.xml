@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/navigation_namecards"
-        android:label="Namecards"
+        android:label="@string/title_namecards"
         tools:layout="@layout/fragment_namecards"
         android:name="com.example.bluenet.ui.namecards.NamecardsFragment"/>
 </navigation>

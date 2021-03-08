@@ -18,7 +18,7 @@ class NamecardsFragment : Fragment() {
     private lateinit var namecardsViewModel: NamecardsViewModel
 
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
-    private var fragmentNamecardsBinding: FragmentNamecardsBinding? = null
+    private lateinit var fragmentNamecardsBinding: FragmentNamecardsBinding
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -28,10 +28,10 @@ class NamecardsFragment : Fragment() {
         namecardsViewModel =
                 ViewModelProvider(this).get(NamecardsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_namecards, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-        namecardsViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+//        val textView: TextView = root.findViewById(R.id.text_notifications)
+//        namecardsViewModel.text.observe(viewLifecycleOwner, Observer {
+//            textView.text = it
+//        })
         return root
     }
 
@@ -45,10 +45,12 @@ class NamecardsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val spinner = fragmentNamecardsBinding?.spinnerIndustry
+        val spinnerIndustry = fragmentNamecardsBinding.spinnerIndustry
+        val spinnerRole = fragmentNamecardsBinding.spinnerRole
 
         // Initialise spinner
-        this!!.activity?.let {
+        this.activity?.let {
+            // Initialise industry spinner
             ArrayAdapter.createFromResource(
                     it,
                     R.array.industries,
@@ -57,16 +59,23 @@ class NamecardsFragment : Fragment() {
                 // Specify the layout to use when the list of choices appears
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 // Apply the adapter to the spinner
-                spinner?.adapter = adapter
+                spinnerIndustry.adapter = adapter
+            }
+
+            // Initialise role spinner
+            ArrayAdapter.createFromResource(
+                    it,
+                    R.array.roles,
+                    android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                spinnerRole?.adapter = adapter
             }
         }
 
     }
 
-    override fun onDestroyView() {
-        // Consider not storing the binding instance in a field, if not needed.
-        fragmentNamecardsBinding = null
-        super.onDestroyView()
-    }
 
 }
