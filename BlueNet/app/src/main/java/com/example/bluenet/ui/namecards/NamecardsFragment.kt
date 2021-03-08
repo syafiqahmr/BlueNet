@@ -1,21 +1,28 @@
 package com.example.bluenet.ui.namecards
 
+import android.content.Context
+import android.media.Image
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
+import android.widget.ListView
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.bluenet.Namecards
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentNamecardsBinding
 
 class NamecardsFragment : Fragment() {
 
     private lateinit var namecardsViewModel: NamecardsViewModel
+    private lateinit var lvNamecards: ListView
+
+    // TODO: Link to actual data
+    private var names = R.array.namecardName
+    private var companies = R.array.namecardCompany
+    private var images = arrayOf(R.drawable.person1, R.drawable.person2)
 
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
     private lateinit var fragmentNamecardsBinding: FragmentNamecardsBinding
@@ -38,13 +45,25 @@ class NamecardsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentNamecardsBinding.bind(view)
-        fragmentNamecardsBinding = binding
+        fragmentNamecardsBinding = FragmentNamecardsBinding.bind(view)
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        initialiseSpinner()
+
+        lvNamecards = fragmentNamecardsBinding.lvNamecards
+        var arrNamecard: ArrayList<Namecard> = ArrayList()
+        arrNamecard.add(Namecard("Person1", "Company1", R.drawable.person1))
+        arrNamecard.add(Namecard("Person2", "Company2", R.drawable.person2))
+
+        lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
+
+    }
+
+    private fun initialiseSpinner(){
         val spinnerIndustry = fragmentNamecardsBinding.spinnerIndustry
         val spinnerRole = fragmentNamecardsBinding.spinnerRole
 
@@ -74,8 +93,9 @@ class NamecardsFragment : Fragment() {
                 spinnerRole?.adapter = adapter
             }
         }
-
     }
 
 
 }
+
+

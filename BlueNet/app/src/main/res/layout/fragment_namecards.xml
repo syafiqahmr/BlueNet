@@ -4,30 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.namecards.NamecardsFragment">
+    tools:context=".ui.namecards.NamecardsFragment"
+    android:layout_margin="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="10dp"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/spinnerIndustry"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:ignore="MissingConstraints" />
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Spinner
-            android:id="@+id/spinnerRole"
+            <Spinner
+                android:id="@+id/spinnerIndustry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <Spinner
+                android:id="@+id/spinnerRole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:ignore="MissingConstraints" />
+            android:id="@+id/lvNamecards">
+
+        </ListView>
 
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
