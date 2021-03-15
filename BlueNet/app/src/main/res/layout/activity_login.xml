@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.082"
-        app:srcCompat="@drawable/BlueNet" />
+        app:srcCompat="@drawable/bluenet" />
 
     <EditText
         android:id="@+id/name"
@@ -31,6 +31,7 @@
         android:textColor="#071A41"
         android:textColorHint="#071A41"
         android:textColorLink="#071A41"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +49,7 @@
         android:textColor="#071A41"
         android:textColorHint="#071A41"
         android:textColorLink="#071A41"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
@@ -59,12 +61,14 @@
         android:id="@+id/registerBtn"
         android:layout_width="182dp"
         android:layout_height="51dp"
+        android:background="#00BCD4"
+        android:onClick="login"
         android:shadowColor="#5A5A5A"
         android:shadowDx="10"
         android:shadowDy="10"
         android:text="Login"
-        android:onClick="login"
         android:textColor="#071A41"
+        android:textSize="18sp"
         app:backgroundTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

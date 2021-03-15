@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.046"
-        app:srcCompat="@drawable/BlueNet" />
+        app:srcCompat="@drawable/bluenet" />
 
     <EditText
         android:id="@+id/name"
@@ -125,7 +125,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06"
-        app:srcCompat="@drawable/BackArrow" />
+        app:srcCompat="@drawable/backarrow" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
