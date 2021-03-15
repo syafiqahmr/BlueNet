@@ -1,19 +1,15 @@
 package com.example.bluenet.ui.login
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bluenet.R
 import com.example.bluenet.ui.home.HomeViewModel
 import com.example.bluenet.ui.register.Register
-import java.io.File
 import java.util.*
 
 class Login : AppCompatActivity() {
@@ -40,7 +36,7 @@ class Login : AppCompatActivity() {
             val dbPassword = SpannableStringBuilder(account.nextLine())
 
             // Get Username & Password inputs
-            val inputUsername = findViewById<TextView>(R.id.username).text
+            val inputUsername = findViewById<TextView>(R.id.name).text
             val inputPassword = findViewById<TextView>(R.id.password).text
 
             if (inputUsername != dbUsername || inputPassword != dbPassword){

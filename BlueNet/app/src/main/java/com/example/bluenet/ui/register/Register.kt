@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.bluenet.R
 import com.example.bluenet.ui.home.HomeViewModel
+import com.example.bluenet.ui.login.Login
 import java.io.PrintStream
 
 class Register : AppCompatActivity() {
@@ -21,7 +22,7 @@ class Register : AppCompatActivity() {
         var error = ArrayList<String>()
 
         // Get Username & Password inputs
-        val inputUsername = findViewById<TextView>(R.id.username).text
+        val inputUsername = findViewById<TextView>(R.id.name).text
         val inputPassword = findViewById<TextView>(R.id.password).text
         val inputConfirmPassword = findViewById<TextView>(R.id.confirmPassword).text
         val inputEmail = findViewById<TextView>(R.id.email).text
@@ -52,5 +53,11 @@ class Register : AppCompatActivity() {
             // Show First Error
             Toast.makeText(this, error[0], Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // Return to Login page
+    fun back(view: View) {
+        val int = Intent(this, Login::class.java)
+        startActivity(int)
     }
 }
