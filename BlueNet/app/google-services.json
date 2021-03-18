@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "863868241777",
+    "project_id": "bluenet-8d8b9",
+    "storage_bucket": "bluenet-8d8b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863868241777:android:b8fcd44446274ed77698d0",
+        "android_client_info": {
+          "package_name": "com.example.bluenet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863868241777-0f1onjehmecb2cruug3ddi1rav6v779t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOsiD9tihAF8rsoJ3mXgM-2oODU3iAo3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863868241777-0f1onjehmecb2cruug3ddi1rav6v779t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
