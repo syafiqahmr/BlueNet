@@ -83,8 +83,8 @@ class MyNamecardFragment : Fragment() {
 
     fun imageButtonOnClick(view: View) {
         // go to imagePopup page
-        val intent = Intent(this, ImagePopup::class.java)
-        startActivityForResult(intent, MyNamecardFragment.IMAGE_PICK_CODE)
+        val intent = Intent(this.activity, ImagePopup::class.java)
+        startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
     private fun saveNamecard(){
