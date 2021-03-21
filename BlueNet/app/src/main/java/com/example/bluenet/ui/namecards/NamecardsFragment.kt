@@ -1,6 +1,7 @@
 package com.example.bluenet.ui.namecards
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentNamecardsBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class NamecardsFragment : Fragment() {
@@ -44,12 +50,13 @@ class NamecardsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         initialiseSpinner()
+        retrieveDataFromDB()
 
         // Initalise fake namecards data
         lvNamecards = fragmentNamecardsBinding.lvNamecards
         arrNamecard.add(Namecard("1","Person1", "Company1", R.drawable.person1, "Finance", "Entrepreneur"))
         arrNamecard.add(Namecard("2", "Person2", "Company2", R.drawable.person2, "Technology", "Venture Capitalist"))
-        lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
+        refreshList()
 
     }
 
@@ -109,6 +116,43 @@ class NamecardsFragment : Fragment() {
             }
         })
 
+    }
+
+    private fun retrieveDataFromDB(){
+        val ref = FirebaseDatabase.getInstance().getReference("namecards")
+
+        // TODO: Move this to db
+        var arrNamecardId: ArrayList<String> = ArrayList()
+        arrNamecardId.add("-MWK2ADdo9CCBS37Uusa")
+        arrNamecardId.add("-MWK2YOveOso2Ji-9RRk")
+
+        // Read from the database
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (n in dataSnapshot.children){
+                        val namecard = n.getValue(Namecard::class.java)
+                        if (namecard != null && namecard.id in arrNamecardId) {
+                            arrNamecard.add(namecard)
+                        }
+                    }
+
+                    refreshList()
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("test", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        ref.addValueEventListener(postListener)
+    }
+
+    private fun refreshList(){
+        lvNamecards = fragmentNamecardsBinding.lvNamecards
+        lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
     }
 
     private fun applyFilter(){
