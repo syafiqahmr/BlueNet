@@ -73,7 +73,7 @@
     <!--        app:layout_constraintTop_toTopOf="@+id/imageView5" />-->
 
     <Spinner
-        android:id="@+id/spinnerRole"
+        android:id="@+id/role"
         android:layout_width="234dp"
         android:layout_height="38dp"
         android:layout_weight="1"

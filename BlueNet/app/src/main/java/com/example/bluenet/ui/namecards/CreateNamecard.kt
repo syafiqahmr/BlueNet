@@ -16,7 +16,8 @@ import com.example.bluenet.R
 import com.google.firebase.database.FirebaseDatabase
 import java.io.File
 
-class CreateNamecard : AppCompatActivity() {
+class CreateNamecard() : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
@@ -28,14 +29,14 @@ class CreateNamecard : AppCompatActivity() {
         private const val IMAGE_PICK_CODE = 900
     }
 
-    private fun initialiseSpinner(){
-        val spinnerRole = findViewById<Spinner>(R.id.roleSpinner)
+    fun initialiseSpinner() {
+        val spinnerRole = findViewById<Spinner>(R.id.role)
 
         // Initialise role spinner
         ArrayAdapter.createFromResource(
-                this,
-                R.array.roles,
-                android.R.layout.simple_spinner_item
+            this,
+            R.array.roles,
+            android.R.layout.simple_spinner_item
         ).also { adapter ->
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -64,19 +65,25 @@ class CreateNamecard : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun createOnClick(){
+    fun createOnClick(view: View) {
 
         Log.d("saved", "clicked!")
 
         val name = findViewById<EditText>(R.id.name).text.toString().trim()
         val industry = findViewById<EditText>(R.id.industry).toString().trim()
         val company = findViewById<EditText>(R.id.company).toString().trim()
-        val position = findViewById<Spinner>(R.id.spinnerRole).toString().trim()
+        val position = findViewById<Spinner>(R.id.role).toString().trim()
         val image = findViewById<ImageButton>(R.id.namecardPhoto)
 
         // TODO: set input checks
 
-        if (name != "" && company != ""){
+        if (name == "") {
+            findViewById<EditText>(R.id.name).error = "Name is required!"
+            findViewById<EditText>(R.id.name).requestFocus()
+        } else if (company == "") {
+            findViewById<EditText>(R.id.company).error = "Name is required!"
+            findViewById<EditText>(R.id.company).requestFocus()
+        } else if (name != "" && company != "") {
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecardId = ref.push().key.toString()
 
@@ -90,14 +97,9 @@ class CreateNamecard : AppCompatActivity() {
             val it = Intent(this, MainActivity::class.java)
             startActivity(it)
 
-        } else if (name == ""){
-            findViewById<EditText>(R.id.name).error = "Name is required!"
-            findViewById<EditText>(R.id.name).requestFocus()
-        }  else if (company == ""){
-            findViewById<EditText>(R.id.company).error = "Name is required!"
-            findViewById<EditText>(R.id.company).requestFocus()
-        }
-
     }
 }
+
+
+
 
