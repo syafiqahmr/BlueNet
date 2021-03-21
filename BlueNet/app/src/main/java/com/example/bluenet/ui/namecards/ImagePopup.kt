@@ -13,8 +13,8 @@ import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bluenet.R
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
+import android.net.Uri
 
 
 class ImagePopup : AppCompatActivity() {
