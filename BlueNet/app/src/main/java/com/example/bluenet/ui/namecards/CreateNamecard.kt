@@ -46,7 +46,6 @@ class CreateNamecard() : AppCompatActivity() {
 
     }
 
-
     fun imageButtonOnClick(view: View) {
         // go to imagePopup page
         val intent = Intent(this, ImagePopup::class.java)
@@ -74,16 +73,22 @@ class CreateNamecard() : AppCompatActivity() {
         val company = findViewById<EditText>(R.id.company).toString().trim()
         val position = findViewById<Spinner>(R.id.role).toString().trim()
         val image = findViewById<ImageButton>(R.id.namecardPhoto)
-
+        var hasError = false
         // TODO: set input checks
 
-        if (name == "") {
+        if (name.isEmpty()) {
             findViewById<EditText>(R.id.name).error = "Name is required!"
             findViewById<EditText>(R.id.name).requestFocus()
-        } else if (company == "") {
+            hasError = true
+        }
+
+        if (company.isEmpty()) {
             findViewById<EditText>(R.id.company).error = "Name is required!"
             findViewById<EditText>(R.id.company).requestFocus()
-        } else if (name != "" && company != "") {
+            hasError = true
+        }
+
+        if (!hasError) {
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecardId = ref.push().key.toString()
 
@@ -96,6 +101,7 @@ class CreateNamecard() : AppCompatActivity() {
 
             val it = Intent(this, MainActivity::class.java)
             startActivity(it)
+        }
 
     }
 }
