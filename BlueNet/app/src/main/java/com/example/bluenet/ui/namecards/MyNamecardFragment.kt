@@ -6,20 +6,25 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.view.get
 import com.example.assignment3.ImagePopup
+import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentMyNamecardBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.io.File
 import java.io.PrintStream
 import java.util.*
@@ -28,6 +33,9 @@ class MyNamecardFragment : Fragment() {
 
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
     private lateinit var fragmentMyNamecardBinding: FragmentMyNamecardBinding
+
+    private var role = "Entrepreneur"
+    private lateinit var user: FirebaseUser
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +66,8 @@ class MyNamecardFragment : Fragment() {
             saveNamecard()
         }
 
-        //TODO: Retrieve current namecard data and display it
+        // Retrieve namecard data and display it
+        getData()
 
     }
 
@@ -80,6 +89,43 @@ class MyNamecardFragment : Fragment() {
             }
         }
 
+        // set event listener for industry spinner
+        spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                role = parentView?.getItemAtPosition(position).toString()
+            }
+        })
+
+    }
+
+    private fun getData(){
+        user = FirebaseAuth.getInstance().currentUser
+        val ref = Firebase.database.reference
+
+        ref.child("namecards").child(user.uid).get().addOnSuccessListener {
+            var name = fragmentMyNamecardBinding.name
+            val industry = fragmentMyNamecardBinding.industry
+            val company = fragmentMyNamecardBinding.company
+            val position = fragmentMyNamecardBinding.spinnerRole
+
+            val namecard = it.getValue(Namecard::class.java)
+            Log.d("name1", namecard.toString())
+            if (namecard != null) {
+                // TODO: Need display those with spinner
+                fragmentMyNamecardBinding.name.setText(namecard.name)
+                fragmentMyNamecardBinding.industry.setText(namecard.industry)
+                fragmentMyNamecardBinding.company.setText(namecard.company)
+
+            }
+
+        }.addOnFailureListener{
+            Log.e("firebase", "Error getting data", it)
+        }
+
+
     }
 
     fun imageButtonOnClick(view: View) {
@@ -92,23 +138,20 @@ class MyNamecardFragment : Fragment() {
 
         Log.d("saved", "clicked!")
 
+        // TODO: Industry should be spinner
+
         val name = fragmentMyNamecardBinding.name.text.toString().trim()
         val industry = fragmentMyNamecardBinding.industry.text.toString().trim()
         val company = fragmentMyNamecardBinding.company.text.toString().trim()
-        val position = fragmentMyNamecardBinding.spinnerRole.toString().trim()
         val image = fragmentMyNamecardBinding.namecardPhoto
 
-        // TODO: set input checks
-
         if (name != "" && company != ""){
+            // update db
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
-            val namecardId = ref.push().key.toString()
+            val namecard = Namecard(name, company, null, industry, role)
 
-            val namecard = Namecard(namecardId, name, company, null, industry, position)
-
-            ref.child(namecardId).setValue(namecard).addOnCompleteListener {
+            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
                 Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
-                Log.d("namecardId", namecardId)
             }
         } else if (name == ""){
             fragmentMyNamecardBinding.name.error = "Name is required!"
@@ -117,7 +160,6 @@ class MyNamecardFragment : Fragment() {
             fragmentMyNamecardBinding.company.error = "Name is required!"
             fragmentMyNamecardBinding.company.requestFocus()
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.R)

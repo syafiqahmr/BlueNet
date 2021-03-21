@@ -13,10 +13,13 @@ import androidx.annotation.RequiresApi
 import com.example.assignment3.ImagePopup
 import com.example.bluenet.MainActivity
 import com.example.bluenet.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.io.File
 
 class CreateNamecard() : AppCompatActivity() {
+
+    private var role = "Entrepreneur"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +32,7 @@ class CreateNamecard() : AppCompatActivity() {
         private const val IMAGE_PICK_CODE = 900
     }
 
-    fun initialiseSpinner() {
+    private fun initialiseSpinner() {
         val spinnerRole = findViewById<Spinner>(R.id.role)
 
         // Initialise role spinner
@@ -43,6 +46,16 @@ class CreateNamecard() : AppCompatActivity() {
             // Apply the adapter to the spinner
             spinnerRole?.adapter = adapter
         }
+
+        // set event listener for industry spinner
+        spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                role = parentView?.getItemAtPosition(position).toString()
+            }
+        })
 
     }
 
@@ -67,15 +80,10 @@ class CreateNamecard() : AppCompatActivity() {
 
     fun createOnClick(view: View) {
 
-        Log.d("saved", "clicked!")
-
         val name = findViewById<EditText>(R.id.name).text.toString().trim()
-        val industry = findViewById<EditText>(R.id.industry).toString().trim()
-        val company = findViewById<EditText>(R.id.company).toString().trim()
-        val position = findViewById<Spinner>(R.id.role).toString().trim()
+        val industry = findViewById<EditText>(R.id.industry).text.toString().trim()
+        val company = findViewById<EditText>(R.id.company).text.toString().trim()
         val image = findViewById<ImageButton>(R.id.namecardPhoto)
-
-        // TODO: set input checks
 
         if (name == "") {
             findViewById<EditText>(R.id.name).error = "Name is required!"
@@ -84,20 +92,28 @@ class CreateNamecard() : AppCompatActivity() {
             findViewById<EditText>(R.id.company).error = "Name is required!"
             findViewById<EditText>(R.id.company).requestFocus()
         } else if (name != "" && company != "") {
-            val ref = FirebaseDatabase.getInstance().getReference("namecards")
-            val namecardId = ref.push().key.toString()
+            val namecard = Namecard(name, company, null, industry, role)
+            saveToDb(namecard)
 
-            val namecard = Namecard(namecardId, name, company, null, industry, position)
 
-            ref.child(namecardId).setValue(namecard).addOnCompleteListener {
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
-                Log.d("namecardId", namecardId)
-            }
+            Log.d("saved", "clicked!")
 
             val it = Intent(this, MainActivity::class.java)
             startActivity(it)
 
         }
+    }
+
+    private fun saveToDb(namecard: Namecard){
+        val user = FirebaseAuth.getInstance().currentUser
+        val ref = FirebaseDatabase.getInstance().getReference("namecards")
+
+        // namecard id == uid
+        ref.child(user.uid).setValue(namecard).addOnCompleteListener {
+            Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+        }
+
+
     }
 }
 

@@ -53,25 +53,6 @@
         app:layout_constraintTop_toTopOf="@+id/imageView5"
         app:layout_constraintVertical_bias="0.077" />
 
-    <!--    <EditText-->
-    <!--        android:id="@+id/position"-->
-    <!--        android:layout_width="230dp"-->
-    <!--        android:layout_height="40dp"-->
-    <!--        android:background="@drawable/underline_edittext"-->
-    <!--        android:hint="Position (Dropdown)"-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        android:paddingLeft="25px"-->
-    <!--        android:paddingRight="25px"-->
-    <!--        android:textColor="#FFFFFF"-->
-    <!--        android:textColorHint="#FFFFFF"-->
-    <!--        android:textColorLink="#FFFFFF"-->
-    <!--        android:textSize="16sp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/imageView5"-->
-    <!--        app:layout_constraintEnd_toEndOf="@+id/imageView5"-->
-    <!--        app:layout_constraintHorizontal_bias="0.87"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/imageView5"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/imageView5" />-->
-
     <Spinner
         android:id="@+id/role"
         android:layout_width="234dp"
@@ -167,7 +148,7 @@
         android:layout_width="201dp"
         android:layout_height="51dp"
         android:onClick="createOnClick"
-        android:text="Create Namecard"
+        android:text="Update"
         android:textColor="#071A41"
         app:backgroundTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"

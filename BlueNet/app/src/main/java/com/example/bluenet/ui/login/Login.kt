@@ -34,7 +34,7 @@ class Login : AppCompatActivity() {
         authenticate(findViewById<TextView>(R.id.email).text.toString(), findViewById<TextView>(R.id.password).text.toString() )
     }
 
-    fun authenticate(email: String, password: String){
+    private fun authenticate(email: String, password: String){
         auth = FirebaseAuth.getInstance()
 
         auth.signInWithEmailAndPassword(email, password)

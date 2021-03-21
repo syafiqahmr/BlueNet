@@ -54,8 +54,8 @@ class NamecardsFragment : Fragment() {
 
         // Initalise fake namecards data
         lvNamecards = fragmentNamecardsBinding.lvNamecards
-        arrNamecard.add(Namecard("1","Person1", "Company1", R.drawable.person1, "Finance", "Entrepreneur"))
-        arrNamecard.add(Namecard("2", "Person2", "Company2", R.drawable.person2, "Technology", "Venture Capitalist"))
+        arrNamecard.add(Namecard("Person1", "Company1", R.drawable.person1, "Finance", "Entrepreneur"))
+        arrNamecard.add(Namecard("Person2", "Company2", R.drawable.person2, "Technology", "Venture Capitalist"))
         refreshList()
 
     }
@@ -132,7 +132,7 @@ class NamecardsFragment : Fragment() {
                 if (dataSnapshot.exists()){
                     for (n in dataSnapshot.children){
                         val namecard = n.getValue(Namecard::class.java)
-                        if (namecard != null && namecard.id in arrNamecardId) {
+                        if (namecard != null && n.key in arrNamecardId) {
                             arrNamecard.add(namecard)
                         }
                     }
