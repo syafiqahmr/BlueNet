@@ -97,6 +97,7 @@ class CreateNamecard() : AppCompatActivity() {
             val it = Intent(this, MainActivity::class.java)
             startActivity(it)
 
+        }
     }
 }
 
