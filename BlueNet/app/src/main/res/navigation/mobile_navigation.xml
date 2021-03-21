@@ -30,6 +30,12 @@
         android:name="com.example.bluenet.ui.namecards.NamecardsFragment"/>
 
     <fragment
+        android:id="@+id/navigation_my_namecard"
+        android:label="My Namecard"
+        tools:layout="@layout/fragment_my_namecard"
+        android:name="com.example.bluenet.ui.namecards.MyNamecardFragment"/>
+
+    <fragment
         android:id="@+id/navigation_traffic"
         android:label="@string/title_traffic"
         tools:layout="@layout/fragment_traffic"
