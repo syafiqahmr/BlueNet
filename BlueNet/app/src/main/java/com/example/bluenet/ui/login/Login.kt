@@ -7,12 +7,16 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.example.bluenet.ui.home.HomeViewModel
 import com.example.bluenet.ui.register.Register
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class Login : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,33 +31,24 @@ class Login : AppCompatActivity() {
     }
 
     fun login(view: View) {
-        var error = ""
-        // Check username & password with database (file for now)
-        try{
-            val account = Scanner(openFileInput("account.txt"))
-            // Get username & password from FILE/DATABASE
-            val dbUsername = SpannableStringBuilder(account.nextLine())
-            val dbPassword = SpannableStringBuilder(account.nextLine())
+        authenticate(findViewById<TextView>(R.id.email).text.toString(), findViewById<TextView>(R.id.password).text.toString() )
+    }
 
-            // Get Username & Password inputs
-            val inputUsername = findViewById<TextView>(R.id.name).text
-            val inputPassword = findViewById<TextView>(R.id.password).text
+    fun authenticate(email: String, password: String){
+        auth = FirebaseAuth.getInstance()
 
-            if (inputUsername != dbUsername || inputPassword != dbPassword){
-                error = "Invalid Username/Password!"
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, navigate to home
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Toast.makeText(baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                }
             }
-
-            // Maybe can make a banner instead
-            if (error != ""){
-                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-            }
-            else{
-                val intent = Intent(this, HomeViewModel::class.java)
-                startActivity(intent)
-            }
-
-        } catch (e: Exception){
-        }
     }
 
 }

@@ -20,12 +20,12 @@
         app:srcCompat="@drawable/bluenet" />
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/email"
         android:layout_width="277dp"
         android:layout_height="39dp"
         android:background="@drawable/rounded_edittext"
-        android:hint="Username"
-        android:inputType="textPersonName"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
         android:paddingLeft="25px"
         android:paddingRight="25px"
         android:textColor="#071A41"
