@@ -34,7 +34,6 @@ class MyNamecardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        initialiseSpinner()
         return inflater.inflate(R.layout.fragment_my_namecard, container, false)
     }
 
@@ -50,6 +49,8 @@ class MyNamecardFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        initialiseSpinner()
 
         // set button event listener
         val saveButton = fragmentMyNamecardBinding.buttonSave
@@ -84,7 +85,7 @@ class MyNamecardFragment : Fragment() {
     fun imageButtonOnClick(view: View) {
         // go to imagePopup page
         val intent = Intent(this.activity, ImagePopup::class.java)
-        startActivityForResult(intent, IMAGE_PICK_CODE)
+        startActivityForResult(intent, MyNamecardFragment.IMAGE_PICK_CODE)
     }
 
     private fun saveNamecard(){
