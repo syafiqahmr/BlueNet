@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -24,6 +25,7 @@ class CreateNamecard() : AppCompatActivity() {
 
     private var role = "Entrepreneur"
     private lateinit var imageBtn: ImageButton
+    private lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,6 +131,30 @@ class CreateNamecard() : AppCompatActivity() {
 
 
     }
+
+    fun createOnClick(view: View) {
+        val name = findViewById<EditText>(R.id.name).text.toString().trim()
+        val industry = findViewById<EditText>(R.id.industry).text.toString().trim()
+        val company = findViewById<EditText>(R.id.company).text.toString().trim()
+        val image = findViewById<ImageButton>(R.id.namecardPhoto)
+
+        if (name != "" && company != ""){
+            // update db
+            val ref = FirebaseDatabase.getInstance().getReference("namecards")
+            val namecard = Namecard(name, company, null, industry, role)
+
+            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
+                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+            }
+        } else if (name.isBlank()){
+            findViewById<EditText>(R.id.name).error = "Name is required!"
+            findViewById<EditText>(R.id.name).requestFocus()
+        }  else if (company.isBlank()){
+            findViewById<EditText>(R.id.company).error = "Company is required!"
+            findViewById<EditText>(R.id.company).requestFocus()
+        }
+    }
+
 }
 
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -37,6 +38,17 @@ class Register : AppCompatActivity() {
         val inputEmail = findViewById<TextView>(R.id.email).text.trim()
         var hasError = false
 
+        // Check if email is valid ?
+        if (inputEmail.isEmpty()){
+            findViewById<TextView>(R.id.email).error = "Please input your email!"
+            findViewById<TextView>(R.id.email).requestFocus()
+            hasError = true
+        } else if (!inputEmail.isValidEmail()){
+            findViewById<TextView>(R.id.email).error = "Please input a valid email!"
+            findViewById<TextView>(R.id.email).requestFocus()
+            hasError = true
+        }
+
         if (inputPassword.isEmpty()){
             findViewById<TextView>(R.id.password).error = "Please input your password!"
             findViewById<TextView>(R.id.password).requestFocus()
@@ -54,26 +66,16 @@ class Register : AppCompatActivity() {
             hasError = true
         }
 
-        // Check if email is valid ?
-        if (inputEmail.isEmpty()){
-            findViewById<TextView>(R.id.email).error = "Please input your email!"
-            findViewById<TextView>(R.id.email).requestFocus()
-            hasError = true
-        }
-
         // Check if there's errors
         if (!hasError){
             // TODO: dropdown for visitor/booth
             savetodb(inputEmail.toString(), inputPassword.toString(), "Visitor")
 
-            // Go to Homepage
-            val intent = Intent(this, CreateNamecard::class.java)
-            startActivity(intent)
-
-        } else{
-
         }
     }
+
+    // Email Validation Function
+    fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
     // Return to Login page
     fun back(view: View) {
@@ -96,9 +98,12 @@ class Register : AppCompatActivity() {
                     // Save more details into "users" db
                     val user = User(type)
                     val ref = FirebaseDatabase.getInstance().getReference("users")
-                    ref.child(firebaseUser.uid).setValue(user).addOnCompleteListener {
+                    ref.child(firebaseUser!!.uid).setValue(user).addOnCompleteListener {
                         Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()
                     }
+                    // Go to CreateNamecard page
+                    val intent = Intent(this, CreateNamecard::class.java)
+                    startActivity(intent)
 
                 } else {
                     // If sign in fails, display a message to the user.

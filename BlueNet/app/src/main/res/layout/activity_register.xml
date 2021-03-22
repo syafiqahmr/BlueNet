@@ -20,25 +20,6 @@
         app:srcCompat="@drawable/bluenet" />
 
     <EditText
-        android:id="@+id/name"
-        android:layout_width="277dp"
-        android:layout_height="39dp"
-        android:background="@drawable/rounded_edittext"
-        android:hint="Username"
-        android:inputType="textPersonName"
-        android:paddingLeft="25px"
-        android:paddingRight="25px"
-        android:textColor="#071A41"
-        android:textColorHint="#071A41"
-        android:textColorLink="#071A41"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.31" />
-
-    <EditText
         android:id="@+id/password"
         android:layout_width="277dp"
         android:layout_height="39dp"
@@ -52,9 +33,10 @@
         android:textColorLink="#071A41"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintVertical_bias="0.052" />
+        app:layout_constraintTop_toBottomOf="@+id/email"
+        app:layout_constraintVertical_bias="0.083" />
 
     <EditText
         android:id="@+id/confirmPassword"
@@ -70,10 +52,9 @@
         android:textColorLink="#071A41"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.072" />
+        app:layout_constraintVertical_bias="0.089" />
 
     <EditText
         android:id="@+id/email"
@@ -91,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmPassword"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0.087" />
 
     <Button
