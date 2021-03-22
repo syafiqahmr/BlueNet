@@ -139,13 +139,11 @@ class CreateNamecard() : AppCompatActivity() {
         val image = findViewById<ImageButton>(R.id.namecardPhoto)
 
         if (name != "" && company != ""){
-            // update db
-            val ref = FirebaseDatabase.getInstance().getReference("namecards")
+            // save to db
             val namecard = Namecard(name, company, null, industry, role)
 
-            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
-            }
+            saveToDb(namecard)
+
         } else if (name.isBlank()){
             findViewById<EditText>(R.id.name).error = "Name is required!"
             findViewById<EditText>(R.id.name).requestFocus()
