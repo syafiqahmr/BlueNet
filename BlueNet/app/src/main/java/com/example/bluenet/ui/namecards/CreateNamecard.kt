@@ -40,6 +40,8 @@ class CreateNamecard() : AppCompatActivity() {
     }
 
     private fun initialiseSpinner() {
+        // TODO: Make Industry a spinner also like filter
+
         val spinnerRole = findViewById<Spinner>(R.id.role)
 
         // Initialise role spinner
@@ -119,7 +121,7 @@ class CreateNamecard() : AppCompatActivity() {
 
 
     private fun saveToDb(namecard: Namecard){
-        val user = FirebaseAuth.getInstance().currentUser
+        user = FirebaseAuth.getInstance().currentUser
         val ref = FirebaseDatabase.getInstance().getReference("namecards")
 
         // namecard id == uid
@@ -128,8 +130,6 @@ class CreateNamecard() : AppCompatActivity() {
                 Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
             }
         }
-
-
     }
 
     fun createOnClick(view: View) {
@@ -140,12 +140,11 @@ class CreateNamecard() : AppCompatActivity() {
 
         if (name != "" && company != ""){
             // update db
-            val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecard = Namecard(name, company, null, industry, role)
+            saveToDb(namecard)
 
-            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
-            }
+            val it = Intent(this, MainActivity::class.java)
+            startActivity(it)
         } else if (name.isBlank()){
             findViewById<EditText>(R.id.name).error = "Name is required!"
             findViewById<EditText>(R.id.name).requestFocus()

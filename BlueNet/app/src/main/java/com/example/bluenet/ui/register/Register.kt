@@ -61,6 +61,7 @@ class Register : AppCompatActivity() {
         }
         // Check if Password & Confirm Password is the same
         else if (inputPassword != inputConfirmPassword){
+            // TODO: dk why if password is too short its giving the error message confirm password is not the same
             findViewById<TextView>(R.id.confirmPassword).error = "Confirm Password is not the same!"
             findViewById<TextView>(R.id.confirmPassword).requestFocus()
             hasError = true
