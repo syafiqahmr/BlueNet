@@ -148,7 +148,7 @@
         android:layout_width="201dp"
         android:layout_height="51dp"
         android:onClick="createOnClick"
-        android:text="Create"
+        android:text="Create Namecard"
         android:textColor="#071A41"
         app:backgroundTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"

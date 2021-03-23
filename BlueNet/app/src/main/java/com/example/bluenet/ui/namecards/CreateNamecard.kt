@@ -6,10 +6,10 @@ import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 
 
+@Suppress("DEPRECATION")
 class CreateNamecard() : AppCompatActivity() {
 
     private var role = "Entrepreneur"
@@ -30,14 +31,14 @@ class CreateNamecard() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
-        imageBtn = findViewById<ImageButton>(R.id.namecardPhoto)
+        imageBtn = findViewById(R.id.namecardPhoto)
 
         initialiseSpinner()
     }
 
-    companion object {
-        private const val IMAGE_PICK_CODE = 900
-    }
+//    companion object {
+//        private const val IMAGE_PICK_CODE = 900
+//    }
 
     private fun initialiseSpinner() {
         // TODO: Make Industry a spinner also like filter
@@ -81,8 +82,9 @@ class CreateNamecard() : AppCompatActivity() {
                 val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivityForResult(takePicture, 0)
             } else if (options[item] == "Choose from Gallery") {
-                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(pickPhoto, 1)
+//                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//                startActivityForResult(pickPhoto, 1)
+                startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1)
             } else if (options[item] == "Cancel") {
                 dialog.dismiss()
             }
@@ -105,13 +107,16 @@ class CreateNamecard() : AppCompatActivity() {
                     if (selectedImage != null) {
                         val cursor: Cursor? = contentResolver.query(selectedImage,
                                 filePathColumn, null, null, null)
-                        if (cursor != null) {
-                            cursor.moveToFirst()
-                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-                            val picturePath: String = cursor.getString(columnIndex)
-                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
-                            cursor.close()
-                        }
+//                        if (cursor != null) {
+//                            cursor.moveToFirst()
+//                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+//                            val picturePath: String = cursor.getString(columnIndex)
+//                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
+//                            cursor.close()
+//                        }
+                        imageBtn.setImageURI(selectedImage)
+                        val source = ImageDecoder.createSource(this.contentResolver, selectedImage)
+                        imageBtn.setImageBitmap(ImageDecoder.decodeBitmap(source))
                     }
                 }
             }
