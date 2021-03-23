@@ -7,6 +7,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -46,10 +47,6 @@ class MyNamecardFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_my_namecard, container, false)
     }
 
-//    companion object {
-//        private const val IMAGE_PICK_CODE = 900
-//    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,6 +83,11 @@ class MyNamecardFragment : Fragment() {
                     } else if (options[item] == "Choose from Gallery") {
                         val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         startActivityForResult(pickPhoto, 1)
+
+//                        val galleryIntent = Intent(Intent.ACTION_PICK)
+//                        galleryIntent.type = "image/"
+//                        startActivityForResult(galleryIntent, 1)
+
                     } else if (options[item] == "Cancel") {
                         dialog.dismiss()
                     }
@@ -153,27 +155,6 @@ class MyNamecardFragment : Fragment() {
     }
 
 
-
-    fun imageButtonOnClick() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
-
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
-        builder.setTitle("Choose your profile picture")
-
-        builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
-            if (options[item] == "Take Photo") {
-                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(takePicture, 0)
-            } else if (options[item] == "Choose from Gallery") {
-                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(pickPhoto, 1)
-            } else if (options[item] == "Cancel") {
-                dialog.dismiss()
-            }
-        })
-        builder.show()
-    }
-
     private fun saveNamecard(){
 
         Log.d("saved", "clicked!")
@@ -202,6 +183,7 @@ class MyNamecardFragment : Fragment() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
@@ -215,21 +197,24 @@ class MyNamecardFragment : Fragment() {
                     val selectedImage = data.data
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                     if (selectedImage != null) {
-                        val cursor: Cursor? = this.requireActivity().contentResolver.query(selectedImage,
-                                filePathColumn, null, null, null)
-                        if (cursor != null) {
-                            cursor.moveToFirst()
-                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-                            val picturePath: String = cursor.getString(columnIndex)
-                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
-                            cursor.close()
-                        }
+//                        val cursor: Cursor? = this.requireActivity().contentResolver.query(selectedImage,
+//                                filePathColumn, null, null, null)
+//                        if (cursor != null) {
+//                            cursor.moveToFirst()
+//                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+//                            val picturePath: String = cursor.getString(columnIndex)
+//                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
+//                            cursor.close()
+                        imageBtn.setImageURI(selectedImage)
+                        val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
+                        imageBtn.setImageBitmap(ImageDecoder.decodeBitmap(source))
+
+//                        }
                     }
                 }
             }
+            super.onActivityResult(requestCode, resultCode, data)
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
-
 
 }

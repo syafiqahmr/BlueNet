@@ -6,6 +6,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -106,13 +107,16 @@ class CreateNamecard() : AppCompatActivity() {
                     if (selectedImage != null) {
                         val cursor: Cursor? = contentResolver.query(selectedImage,
                                 filePathColumn, null, null, null)
-                        if (cursor != null) {
-                            cursor.moveToFirst()
-                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-                            val picturePath: String = cursor.getString(columnIndex)
-                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
-                            cursor.close()
-                        }
+//                        if (cursor != null) {
+//                            cursor.moveToFirst()
+//                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+//                            val picturePath: String = cursor.getString(columnIndex)
+//                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
+//                            cursor.close()
+//                        }
+                        imageBtn.setImageURI(selectedImage)
+                        val source = ImageDecoder.createSource(this.contentResolver, selectedImage)
+                        imageBtn.setImageBitmap(ImageDecoder.decodeBitmap(source))
                     }
                 }
             }
