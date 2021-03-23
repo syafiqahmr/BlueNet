@@ -10,12 +10,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.bluenet.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import org.altbeacon.beacon.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var beaconManager: BeaconManager? = null
+
+    private lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +28,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         beaconManager = BeaconManager.getInstanceForApplication(this)
+        beaconManager!!.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"))
+
+        user = FirebaseAuth.getInstance().currentUser!!
 
         val beacon = Beacon.Builder()
-                .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
+                .setId1(user.uid)
                 .setId2("1")
                 .setId3("2")
                 .setManufacturer(0x0118)
                 .setTxPower(-59)
-                .setDataFields(listOf(1, 2, 3))
                 .build()
         val beaconParser = BeaconParser()
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
@@ -43,8 +49,11 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_traffic, R.id.navigation_dashboard, R.id.navigation_notifications))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_traffic, R.id.navigation_dashboard, R.id.navigation_notifications
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -53,11 +62,21 @@ class MainActivity : AppCompatActivity() {
         beaconManager!!.removeAllRangeNotifiers()
         beaconManager!!.addRangeNotifier(RangeNotifier { beacons, region ->
             if (beacons.isNotEmpty()) {
-                Log.i("Beacon", "The first beacon I see is about " + beacons.iterator().next().distance + " meters away.")
+                Log.i(
+                    "Beacon",
+                    "There are " + beacons.size + " beacons detected."
+                )
             }
         })
         try {
-            beaconManager!!.startRangingBeaconsInRegion(Region("myRangingUniqueId", null, null, null))
+            beaconManager!!.startRangingBeaconsInRegion(
+                Region(
+                    "myRangingUniqueId",
+                    null,
+                    null,
+                    null
+                )
+            )
         } catch (e: RemoteException) {
         }
     }
