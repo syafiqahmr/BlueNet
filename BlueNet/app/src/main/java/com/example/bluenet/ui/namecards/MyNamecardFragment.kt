@@ -46,15 +46,17 @@ class MyNamecardFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_my_namecard, container, false)
     }
 
-    companion object {
-        private const val IMAGE_PICK_CODE = 900
-    }
+//    companion object {
+//        private const val IMAGE_PICK_CODE = 900
+//    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentMyNamecardBinding = FragmentMyNamecardBinding.bind(view)
         imageBtn = fragmentMyNamecardBinding.namecardPhoto
+
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -70,6 +72,26 @@ class MyNamecardFragment : Fragment() {
 
         // Retrieve namecard data and display it
         getData()
+
+        imageBtn.setOnClickListener(View.OnClickListener() {
+                val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+
+                val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
+                builder.setTitle("Choose your profile picture")
+
+                builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
+                    if (options[item] == "Take Photo") {
+                        val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        startActivityForResult(takePicture, 0)
+                    } else if (options[item] == "Choose from Gallery") {
+                        val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        startActivityForResult(pickPhoto, 1)
+                    } else if (options[item] == "Cancel") {
+                        dialog.dismiss()
+                    }
+                })
+                builder.show()
+        })
 
     }
 
@@ -130,7 +152,9 @@ class MyNamecardFragment : Fragment() {
 
     }
 
-    fun imageButtonOnClick(view: View) {
+
+
+    fun imageButtonOnClick() {
         val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)

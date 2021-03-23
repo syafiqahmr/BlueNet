@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -21,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 
 
+@Suppress("DEPRECATION")
 class CreateNamecard() : AppCompatActivity() {
 
     private var role = "Entrepreneur"
@@ -30,14 +30,14 @@ class CreateNamecard() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
-        imageBtn = findViewById<ImageButton>(R.id.namecardPhoto)
+        imageBtn = findViewById(R.id.namecardPhoto)
 
         initialiseSpinner()
     }
 
-    companion object {
-        private const val IMAGE_PICK_CODE = 900
-    }
+//    companion object {
+//        private const val IMAGE_PICK_CODE = 900
+//    }
 
     private fun initialiseSpinner() {
         // TODO: Make Industry a spinner also like filter
@@ -81,8 +81,9 @@ class CreateNamecard() : AppCompatActivity() {
                 val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivityForResult(takePicture, 0)
             } else if (options[item] == "Choose from Gallery") {
-                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(pickPhoto, 1)
+//                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//                startActivityForResult(pickPhoto, 1)
+                startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1)
             } else if (options[item] == "Cancel") {
                 dialog.dismiss()
             }
