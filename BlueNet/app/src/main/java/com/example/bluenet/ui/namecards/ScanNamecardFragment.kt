@@ -2,8 +2,17 @@ package com.example.bluenet.ui.namecards
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,22 +20,27 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentScanNamecardBinding
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
 
 
 class ScanNamecardFragment : Fragment() {
     private lateinit var fragmentScanNamecardBinding: FragmentScanNamecardBinding
-
-    private lateinit var textRecognizer : TextRecognizer
-    private lateinit var mCameraSource : CameraSource
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
+
 
 
 
@@ -42,72 +56,97 @@ class ScanNamecardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fragmentScanNamecardBinding = FragmentScanNamecardBinding.bind(view)
 
-        textRecogniser()
+        // set event listeners
+        fragmentScanNamecardBinding.buttonScan.setOnClickListener {
+            scanNamecardButtonOnClick(it)
+        }
     }
 
-    private fun textRecogniser(){
-        //  Create text Recognizer
-        textRecognizer = TextRecognizer.Builder(this.activity).build()
-        if (!textRecognizer.isOperational) {
-            Toast.makeText(this.activity, "Dependencies not loaded yet.", Toast.LENGTH_LONG)
-            Log.d("Dependencies", "Dependencies not loaded yet.")
-            return
-        }
 
-        //  Init camera source to use high resolution and auto focus
-        mCameraSource = CameraSource.Builder(this.activity, textRecognizer)
-            .setFacing(CameraSource.CAMERA_FACING_BACK)
-            .setRequestedPreviewSize(1280, 1024)
-            .setAutoFocusEnabled(true)
-            .setRequestedFps(2.0f)
-            .build()
+    private fun scanNamecardButtonOnClick(view: View) {
 
-        // Add callback to SurfaceView Preview
-        var surfaceviewPreview = fragmentScanNamecardBinding.surfaceviewPreview
-        surfaceviewPreview.holder.addCallback(object : SurfaceHolder.Callback{
-            override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-            }
+        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
 
-            @SuppressLint("MissingPermission")
-            override fun surfaceCreated(p0: SurfaceHolder) {
-                if (isCameraPermissionGranted()){
-                    mCameraSource.start(surfaceviewPreview.holder)
-                } else{
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
+        builder.setTitle("Choose your profile picture")
+
+        builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
+            if (options[item] == "Take Photo") {
+                while (!isCameraPermissionGranted()){
                     requestForPermission()
                 }
-            }
-
-            override fun surfaceDestroyed(p0: SurfaceHolder) {
-                mCameraSource.stop()
+                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(takePicture, 0)
+            } else if (options[item] == "Choose from Gallery") {
+                startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1)
+            } else if (options[item] == "Cancel") {
+                dialog.dismiss()
             }
         })
-        
-        // set up detector processor
-        textRecognizer.setProcessor(object : Detector.Processor<TextBlock> {
-            override fun release() {}
+        builder.show()
+    }
 
-            override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
-                val items = detections.detectedItems
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-                if (items.size() <= 0) {
-                    return
+        val imageView = fragmentScanNamecardBinding.imageViewNamecardScan
+
+        if (resultCode != AppCompatActivity.RESULT_CANCELED) {
+            when (requestCode) {
+                0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
+                    val selectedImage = data.extras!!["data"] as Bitmap?
+                    imageView.setImageBitmap(selectedImage)
+                    analyze()
                 }
-
-                val textviewResult = fragmentScanNamecardBinding.textviewResult
-
-                textviewResult.post {
-                    val stringBuilder = StringBuilder()
-                    for (i in 0 until items.size()) {
-                        val item = items.valueAt(i)
-                        stringBuilder.append(item.value)
-                        stringBuilder.append("\n")
+                1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
+                    val selectedImage = data.data
+                    Log.i("selectedImage", selectedImage.toString())
+                    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+                    if (selectedImage != null) {
+                        val cursor: Cursor? = this.activity?.contentResolver?.query(selectedImage,
+                                filePathColumn, null, null, null)
+                        imageView.setImageURI(selectedImage)
+                        val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
+                        imageView.setImageBitmap(ImageDecoder.decodeBitmap(source))
                     }
-                    textviewResult.text = stringBuilder.toString()
                 }
             }
-        })
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun analyze(){
+        val recognizer = TextRecognition.getClient()
+
+        val bitmap = fragmentScanNamecardBinding.imageViewNamecardScan.drawable.toBitmap()
+        val image = InputImage.fromBitmap(bitmap, 0)
+        val result = recognizer.process(image)
+                .addOnSuccessListener { visionText ->
+                    extractText(visionText)
+                    Toast.makeText(this.activity, "Success", Toast.LENGTH_SHORT)
+                }
+                .addOnFailureListener { e ->
+                    // Task failed with an exception
+                    // ...
+                    Toast.makeText(this.activity, "Error in analyzing", Toast.LENGTH_SHORT)
+                }
 
     }
+
+    private fun extractText(result: Text){
+        val resultText = result.text
+        for (block in result.textBlocks) {
+            val blockText = block.text
+            val blockCornerPoints = block.cornerPoints
+            val blockFrame = block.boundingBox
+            for (line in block.lines) {
+                val lineText = line.text
+                fragmentScanNamecardBinding.textviewResult.text = lineText
+            }
+        }
+    }
+
+
 
     private fun requestForPermission(){
 
@@ -123,11 +162,11 @@ class ScanNamecardFragment : Fragment() {
                     // sees the explanation, try again to request the permission.
                 } else {
                     ActivityCompat.requestPermissions(
-                        activity,
-                        arrayOf(
-                            Manifest.permission.CAMERA
-                        ),
-                        MY_PERMISSIONS_REQUEST_CAMERA
+                            activity,
+                            arrayOf(
+                                    Manifest.permission.CAMERA
+                            ),
+                            MY_PERMISSIONS_REQUEST_CAMERA
                     )
                 }
             }
@@ -140,8 +179,8 @@ class ScanNamecardFragment : Fragment() {
     private fun isCameraPermissionGranted(): Boolean {
         return this.activity?.let {
             ActivityCompat.checkSelfPermission(
-                it,
-                Manifest.permission.CAMERA
+                    it,
+                    Manifest.permission.CAMERA
             )
         } == PackageManager.PERMISSION_GRANTED
 
@@ -150,8 +189,8 @@ class ScanNamecardFragment : Fragment() {
 
     //for handling permissions
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_CAMERA -> {

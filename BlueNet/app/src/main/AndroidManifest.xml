@@ -32,7 +32,7 @@
     </application>
 
     <meta-data
-        android:name="com.google.android.gms.vision.DEPENDENCIES"
+        android:name="com.google.mlkit.vision.DEPENDENCIES"
         android:value="ocr" />
 
 </manifest>
