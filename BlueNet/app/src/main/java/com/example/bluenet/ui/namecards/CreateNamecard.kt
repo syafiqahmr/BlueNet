@@ -142,10 +142,11 @@ class CreateNamecard() : AppCompatActivity() {
         val industry = findViewById<EditText>(R.id.industry).text.toString().trim()
         val company = findViewById<EditText>(R.id.company).text.toString().trim()
         val image = findViewById<ImageButton>(R.id.namecardPhoto)
+        val linkedin = findViewById<EditText>(R.id.linkedin).text.toString().trim()
 
         if (name != "" && company != ""){
             // save to db
-            val namecard = Namecard(name, company, null, industry, role)
+            val namecard = Namecard(name, company, null, industry, role, linkedin)
             saveToDb(namecard)
 
             val it = Intent(this, MainActivity::class.java)

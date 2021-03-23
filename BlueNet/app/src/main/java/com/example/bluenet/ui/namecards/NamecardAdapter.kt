@@ -1,6 +1,7 @@
 package com.example.bluenet.ui.namecards
 
 import android.content.Context
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,7 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         var image: ImageView
         var tvIndustry: TextView
         var tvRole: TextView
+        var tvLinkedin: TextView
 
         init{
             this.tvName = row?.findViewById(R.id.textViewName) as TextView
@@ -61,6 +63,7 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
             this.image = row?.findViewById(R.id.imageView) as ImageView
             this.tvRole = row?.findViewById(R.id.textViewRole) as TextView
             this.tvIndustry = row?.findViewById(R.id.textViewIndustry) as TextView
+            this.tvLinkedin = row?.findViewById(R.id.textViewLinkedin) as TextView
         }
     }
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
@@ -83,6 +86,8 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         namecard.image?.let { viewHolder.image.setImageResource(it) }
         viewHolder.tvIndustry.text = namecard.industry
         viewHolder.tvRole.text = namecard.role
+        viewHolder.tvLinkedin.text = namecard.linkedin
+
 
         return view as View
     }

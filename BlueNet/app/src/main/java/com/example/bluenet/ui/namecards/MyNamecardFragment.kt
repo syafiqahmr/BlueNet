@@ -144,6 +144,7 @@ class MyNamecardFragment : Fragment() {
                 fragmentMyNamecardBinding.name.setText(namecard.name)
                 fragmentMyNamecardBinding.industry.setText(namecard.industry)
                 fragmentMyNamecardBinding.company.setText(namecard.company)
+                fragmentMyNamecardBinding.linkedin.setText(namecard.linkedin)
 
             }
 
@@ -165,11 +166,12 @@ class MyNamecardFragment : Fragment() {
         val industry = fragmentMyNamecardBinding.industry.text.toString().trim()
         val company = fragmentMyNamecardBinding.company.text.toString().trim()
         val image = fragmentMyNamecardBinding.namecardPhoto
+        val linkedin = fragmentMyNamecardBinding.linkedin.text.toString().trim()
 
         if (name != "" && company != ""){
             // update db
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
-            val namecard = Namecard(name, company, null, industry, role)
+            val namecard = Namecard(name, company, null, industry, role, linkedin)
 
             ref.child(user.uid).setValue(namecard).addOnCompleteListener {
                 Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()

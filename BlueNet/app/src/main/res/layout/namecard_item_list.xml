@@ -20,28 +20,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewName"
-            android:text="Name"
+            android:text=""
             android:textSize="20sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewCompany"
-            android:text="Company"
+            android:text=""
             android:textSize="16sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewIndustry"
-            android:text="Company"
+            android:text=""
             android:textSize="16sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewRole"
-            android:text="Company"
+            android:text=""
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewLinkedin"
+            android:text=""
+            android:autoLink="web"
             android:textSize="16sp"/>
     </LinearLayout>
 

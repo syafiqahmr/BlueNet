@@ -212,7 +212,7 @@ class ScanNamecardFragment : Fragment() {
         var textarr = ArrayList<String> ()
 
         textarr.add("Ong Kai Min")
-        textarr.add("linkedin.com/kaimin")
+        textarr.add("linkedin.com/in/kaimin")
         textarr.add("PhoneNumber: 91131622")
 
         var extraction = NamecardDetailsExtraction(textarr)

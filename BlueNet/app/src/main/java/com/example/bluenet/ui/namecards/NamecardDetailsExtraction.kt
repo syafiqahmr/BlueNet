@@ -38,7 +38,7 @@ class NamecardDetailsExtraction (textArr : ArrayList<String>) {
 
     fun extractLinkedin(): String? {
         for (text in textArr){
-            val LINKEDIN_REGEX = "linkedin\\.com\\/.*\$"
+            val LINKEDIN_REGEX = "linkedin\\.com\\/in\\/.*\$"
             val p: Pattern = Pattern.compile(LINKEDIN_REGEX, Pattern.MULTILINE)
             val m: Matcher = p.matcher(text)
             if (m.find()) {
