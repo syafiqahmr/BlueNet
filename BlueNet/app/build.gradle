@@ -20,6 +20,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -66,4 +67,6 @@ dependencies {
     implementation 'org.altbeacon:android-beacon-library:2+'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation 'com.google.android.gms:play-services-vision:18.0.0'
+    implementation "androidx.multidex:multidex:2.0.1"
 }

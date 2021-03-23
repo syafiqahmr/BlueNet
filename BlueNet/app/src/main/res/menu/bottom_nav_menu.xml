@@ -12,9 +12,9 @@
         android:title="@string/title_traffic" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_scan_namecard"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:title="Scan Namecard" />
 
     <item
         android:id="@+id/navigation_namecards"

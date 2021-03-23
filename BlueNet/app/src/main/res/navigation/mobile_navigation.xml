@@ -35,6 +35,13 @@
         tools:layout="@layout/fragment_my_namecard"
         android:name="com.example.bluenet.ui.namecards.MyNamecardFragment"/>
 
+
+    <fragment
+        android:id="@+id/navigation_scan_namecard"
+        android:label="@string/title_traffic"
+        tools:layout="@layout/fragment_scan_namecard"
+        android:name="com.example.bluenet.ui.namecards.ScanNamecardFragment"/>
+
     <fragment
         android:id="@+id/navigation_traffic"
         android:label="@string/title_traffic"
