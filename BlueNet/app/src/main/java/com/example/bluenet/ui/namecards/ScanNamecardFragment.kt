@@ -60,6 +60,8 @@ class ScanNamecardFragment : Fragment() {
         fragmentScanNamecardBinding.buttonScan.setOnClickListener {
             scanNamecardButtonOnClick(it)
         }
+
+        test()
     }
 
 
@@ -210,6 +212,21 @@ class ScanNamecardFragment : Fragment() {
                 // Ignore all other requests.
             }
         }
+    }
+
+    private fun test(){
+
+        Log.i("test", "start test")
+        var textarr = ArrayList<String> ()
+
+        textarr.add("Ong Kai Min")
+        textarr.add("linkedin.com/kaimin")
+        textarr.add("PhoneNumber: 91131622")
+
+        var extraction = NamecardDetailsExtraction(textarr)
+        extraction.extractName()?.let { Log.i("name", it) }
+        extraction.extractLinkedin()?.let { Log.i("linkedin", it) }
+        extraction.extractPhoneNumber()?.let { Log.i("phone", it) }
     }
 
 
