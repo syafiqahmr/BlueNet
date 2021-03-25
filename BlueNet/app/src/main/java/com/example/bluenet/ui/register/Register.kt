@@ -1,6 +1,7 @@
 package com.example.bluenet.ui.register
 
 import android.content.Intent
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -35,51 +36,58 @@ class Register : AppCompatActivity() {
     fun register(view: View) {
 
         // Get Username & Password inputs
-        val inputPassword = findViewById<TextView>(R.id.password).text.trim()
-        val inputConfirmPassword = findViewById<TextView>(R.id.confirmPassword).text.trim()
-        val inputEmail = findViewById<TextView>(R.id.email).text.trim()
+        val inputPassword = findViewById<EditText>(R.id.password).text.trim()
+        val inputConfirmPassword = findViewById<EditText>(R.id.confirmPassword).text.trim()
+        val inputEmail = findViewById<EditText>(R.id.email).text.trim()
+        val inputBoothCode = findViewById<EditText>(R.id.boothCode).text.trim()
         var hasError = false
 
         if (inputEmail.isEmpty()){
-            findViewById<TextView>(R.id.email).error = "Please input your email!"
-            findViewById<TextView>(R.id.email).requestFocus()
+            findViewById<EditText>(R.id.email).error = "Please input your email!"
+            findViewById<EditText>(R.id.email).requestFocus()
             hasError = true
         }
         // Check format of email input
         else if (!inputEmail.isValidEmail()){
-            findViewById<TextView>(R.id.email).error = "Please input a valid email!"
-            findViewById<TextView>(R.id.email).requestFocus()
+            findViewById<EditText>(R.id.email).error = "Please input a valid email!"
+            findViewById<EditText>(R.id.email).requestFocus()
             hasError = true
         }
 
         if (inputPassword.isEmpty()){
-            findViewById<TextView>(R.id.password).error = "Please input your password!"
-            findViewById<TextView>(R.id.password).requestFocus()
+            findViewById<EditText>(R.id.password).error = "Please input your password!"
+            findViewById<EditText>(R.id.password).requestFocus()
             hasError = true
         }
         // Check length requirement for password
         else if (inputPassword.length < 9){
-            findViewById<TextView>(R.id.password).error = "Please input a password of 9 or more characters!"
-            findViewById<TextView>(R.id.password).requestFocus()
+            findViewById<EditText>(R.id.password).error = "Please input a password of 9 or more characters!"
+            findViewById<EditText>(R.id.password).requestFocus()
             hasError = true
         }
 
         if (inputConfirmPassword.isEmpty()){
-            findViewById<TextView>(R.id.confirmPassword).error = "Please input confirm password!"
-            findViewById<TextView>(R.id.confirmPassword).requestFocus()
+            findViewById<EditText>(R.id.confirmPassword).error = "Please input confirm password!"
+            findViewById<EditText>(R.id.confirmPassword).requestFocus()
             hasError = true
         }
         // Check if Password & Confirm Password is the same
         else if (inputPassword != inputConfirmPassword){
-            findViewById<TextView>(R.id.confirmPassword).error = "Confirm Password is not the same!"
-            findViewById<TextView>(R.id.confirmPassword).requestFocus()
+            findViewById<EditText>(R.id.confirmPassword).error = "Confirm Password is not the same!"
+            findViewById<EditText>(R.id.confirmPassword).requestFocus()
+            hasError = true
+        }
+
+        if (userType == "Booth" && inputBoothCode.isEmpty()){
+            findViewById<EditText>(R.id.boothCode).error = "Please input your booth code!"
+            findViewById<EditText>(R.id.boothCode).requestFocus()
             hasError = true
         }
 
         // Check if there's errors
         if (!hasError){
-            // TODO: dropdown for visitor/booth
-            savetodb(inputEmail.toString(), inputPassword.toString(), "Visitor")
+            // TODO: Allow input for Booth Code!
+            savetodb(inputEmail.toString(), inputPassword.toString(), userType)
 
         }
     }
@@ -127,5 +135,21 @@ class Register : AppCompatActivity() {
 
     }
 
-    fun userTypeOnClick(view: View) {}
+    fun userTypeOnClick(view: View) {
+        var boothCode = findViewById<EditText>(R.id.boothCode)
+
+        when (view.id) {
+            R.id.visitorType -> {
+                userType = "Visitor"
+                boothCode.visibility = View.GONE
+                findViewById<RadioButton>(R.id.boothType).isChecked = false
+            }
+            R.id.boothType -> {
+                userType = "Booth"
+                boothCode.visibility = View.VISIBLE
+                findViewById<RadioButton>(R.id.visitorType).isChecked = false
+            }
+
+        }
+    }
 }
