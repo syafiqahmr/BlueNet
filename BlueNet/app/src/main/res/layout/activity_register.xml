@@ -75,6 +75,59 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0.087" />
 
+    <RadioButton
+        android:id="@+id/visitorType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="userTypeOnClick"
+        android:text="Visitor"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textColorLink="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.289"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmPassword"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <RadioButton
+        android:id="@+id/boothType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="userTypeOnClick"
+        android:text="Booth"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textColorLink="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.357"
+        app:layout_constraintStart_toEndOf="@+id/visitorType"
+        app:layout_constraintTop_toBottomOf="@+id/confirmPassword"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <EditText
+        android:id="@+id/boothCode"
+        android:layout_width="277dp"
+        android:layout_height="39dp"
+        android:layout_marginBottom="176dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Booth Code"
+        android:inputType="text"
+        android:paddingLeft="25px"
+        android:paddingRight="25px"
+        android:textColor="#071A41"
+        android:textColorHint="#071A41"
+        android:textColorLink="#071A41"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/boothType"
+        app:layout_constraintVertical_bias="0.685" />
+
     <Button
         android:id="@+id/registerBtn"
         android:layout_width="182dp"
@@ -91,7 +144,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.727" />
+        app:layout_constraintVertical_bias="0.838" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -107,6 +160,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06"
         app:srcCompat="@drawable/backarrow" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

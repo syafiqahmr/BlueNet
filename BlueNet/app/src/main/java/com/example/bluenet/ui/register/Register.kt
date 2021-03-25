@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.example.bluenet.ui.home.HomeViewModel
@@ -24,10 +23,13 @@ import com.google.firebase.ktx.Firebase
 class Register : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private var userType = "Visitor"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+
     }
 
     fun register(view: View) {
@@ -38,12 +40,13 @@ class Register : AppCompatActivity() {
         val inputEmail = findViewById<TextView>(R.id.email).text.trim()
         var hasError = false
 
-        // Check if email is valid ?
         if (inputEmail.isEmpty()){
             findViewById<TextView>(R.id.email).error = "Please input your email!"
             findViewById<TextView>(R.id.email).requestFocus()
             hasError = true
-        } else if (!inputEmail.isValidEmail()){
+        }
+        // Check format of email input
+        else if (!inputEmail.isValidEmail()){
             findViewById<TextView>(R.id.email).error = "Please input a valid email!"
             findViewById<TextView>(R.id.email).requestFocus()
             hasError = true
@@ -54,6 +57,13 @@ class Register : AppCompatActivity() {
             findViewById<TextView>(R.id.password).requestFocus()
             hasError = true
         }
+        // Check length requirement for password
+        else if (inputPassword.length < 9){
+            findViewById<TextView>(R.id.password).error = "Please input a password of 9 or more characters!"
+            findViewById<TextView>(R.id.password).requestFocus()
+            hasError = true
+        }
+
         if (inputConfirmPassword.isEmpty()){
             findViewById<TextView>(R.id.confirmPassword).error = "Please input confirm password!"
             findViewById<TextView>(R.id.confirmPassword).requestFocus()
@@ -61,7 +71,6 @@ class Register : AppCompatActivity() {
         }
         // Check if Password & Confirm Password is the same
         else if (inputPassword != inputConfirmPassword){
-            // TODO: dk why if password is too short its giving the error message confirm password is not the same
             findViewById<TextView>(R.id.confirmPassword).error = "Confirm Password is not the same!"
             findViewById<TextView>(R.id.confirmPassword).requestFocus()
             hasError = true
@@ -74,6 +83,8 @@ class Register : AppCompatActivity() {
 
         }
     }
+
+
 
     // Email Validation Function
     fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
@@ -115,4 +126,6 @@ class Register : AppCompatActivity() {
             }
 
     }
+
+    fun userTypeOnClick(view: View) {}
 }
