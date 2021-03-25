@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 class CreateNamecard() : AppCompatActivity() {
 
     private var role = "Entrepreneur"
-    private lateinit var imageBtn: ImageButton
+    private lateinit var imageBtn: ImageView
     private lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {

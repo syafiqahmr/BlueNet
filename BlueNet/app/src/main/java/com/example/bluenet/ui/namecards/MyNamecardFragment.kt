@@ -37,7 +37,7 @@ class MyNamecardFragment : Fragment() {
 
     private var role = "Entrepreneur"
     private lateinit var user: FirebaseUser
-    private lateinit var imageBtn: ImageButton
+    private lateinit var userImage: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +51,7 @@ class MyNamecardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentMyNamecardBinding = FragmentMyNamecardBinding.bind(view)
-        imageBtn = fragmentMyNamecardBinding.namecardPhoto
+        userImage = fragmentMyNamecardBinding.namecardPhoto
 
 
     }
@@ -70,7 +70,7 @@ class MyNamecardFragment : Fragment() {
         // Retrieve namecard data and display it
         getData()
 
-        imageBtn.setOnClickListener(View.OnClickListener() {
+        userImage.setOnClickListener(View.OnClickListener() {
                 val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
 
                 val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
@@ -193,25 +193,25 @@ class MyNamecardFragment : Fragment() {
             when (requestCode) {
                 0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.extras!!["data"] as Bitmap?
-                    imageBtn.setImageBitmap(selectedImage)
+                    userImage.setImageBitmap(selectedImage)
                 }
                 1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.data
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                     if (selectedImage != null) {
-//                        val cursor: Cursor? = this.requireActivity().contentResolver.query(selectedImage,
-//                                filePathColumn, null, null, null)
-//                        if (cursor != null) {
-//                            cursor.moveToFirst()
-//                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-//                            val picturePath: String = cursor.getString(columnIndex)
-//                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
-//                            cursor.close()
-                        imageBtn.setImageURI(selectedImage)
-                        val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
-                        imageBtn.setImageBitmap(ImageDecoder.decodeBitmap(source))
+                        val cursor: Cursor? = this.requireActivity().contentResolver.query(selectedImage,
+                                filePathColumn, null, null, null)
+                        if (cursor != null) {
+                            cursor.moveToFirst()
+                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+                            val picturePath: String = cursor.getString(columnIndex)
+                            userImage.setImageBitmap(BitmapFactory.decodeFile(picturePath))
+                            cursor.close()
+//                        userImage.setImageURI(selectedImage)
+//                        val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
+//                        userImage.setImageBitmap(ImageDecoder.decodeBitmap(source))
 
-//                        }
+                        }
                     }
                 }
             }

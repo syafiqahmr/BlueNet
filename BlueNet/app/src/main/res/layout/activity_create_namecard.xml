@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.174"
         app:srcCompat="@drawable/namecard_outline" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/namecardPhoto"
         android:layout_width="106dp"
         android:layout_height="122dp"
