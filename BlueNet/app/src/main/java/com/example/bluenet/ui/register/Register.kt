@@ -20,11 +20,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_register.*
 
 class Register : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private var userType = "Visitor"
+    private var inputBoothCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,7 @@ class Register : AppCompatActivity() {
         val inputPassword = findViewById<EditText>(R.id.password).text.trim()
         val inputConfirmPassword = findViewById<EditText>(R.id.confirmPassword).text.trim()
         val inputEmail = findViewById<EditText>(R.id.email).text.trim()
-        val inputBoothCode = findViewById<EditText>(R.id.boothCode).text.trim()
+        inputBoothCode = findViewById<EditText>(R.id.boothCode).text.toString().trim()
         var hasError = false
 
         if (inputEmail.isEmpty()){
@@ -86,8 +88,7 @@ class Register : AppCompatActivity() {
 
         // Check if there's errors
         if (!hasError){
-            // TODO: Allow input for Booth Code!
-            savetodb(inputEmail.toString(), inputPassword.toString(), userType)
+            savetodb(inputEmail.toString(), inputPassword.toString(), userType, inputBoothCode)
 
         }
     }
@@ -103,7 +104,7 @@ class Register : AppCompatActivity() {
         startActivity(int)
     }
 
-    fun savetodb(email:String,  password:String, type: String){
+    fun savetodb(email:String,  password:String, type: String, code:String){
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
@@ -116,7 +117,7 @@ class Register : AppCompatActivity() {
 
 
                     // Save more details into "users" db
-                    val user = User(type)
+                    val user = User(type, code)
                     val ref = FirebaseDatabase.getInstance().getReference("users")
                     ref.child(firebaseUser!!.uid).setValue(user).addOnCompleteListener {
                         Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()
