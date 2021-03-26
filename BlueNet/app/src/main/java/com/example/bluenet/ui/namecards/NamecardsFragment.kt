@@ -54,8 +54,8 @@ class NamecardsFragment : Fragment() {
 
         // Initalise fake namecards data
         lvNamecards = fragmentNamecardsBinding.lvNamecards
-        arrNamecard.add(Namecard("Person1", "Company1", R.drawable.person1, "Finance", "Entrepreneur", "linkedin.com/in/gdragon"))
-        arrNamecard.add(Namecard("Person2", "Company2", R.drawable.person2, "Technology", "Venture Capitalist", "linkedin.com/in/gdragon"))
+        arrNamecard.add(Namecard("Person1", "Company1", "", "Finance", "Entrepreneur", "linkedin.com/in/gdragon"))
+        arrNamecard.add(Namecard("Person2", "Company2", "", "Technology", "Venture Capitalist", "linkedin.com/in/gdragon"))
         refreshList()
 
     }

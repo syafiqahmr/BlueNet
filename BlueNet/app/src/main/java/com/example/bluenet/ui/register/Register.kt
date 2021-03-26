@@ -105,6 +105,7 @@ class Register : AppCompatActivity() {
     }
 
     fun savetodb(email:String,  password:String, type: String, code:String){
+        Log.i("Progress","Savetodb");
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 

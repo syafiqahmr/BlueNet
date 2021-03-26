@@ -83,7 +83,7 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         var namecard: Namecard = getItem(p0) as Namecard
         viewHolder.tvCompany.text = namecard.company
         viewHolder.tvName.text = namecard.name
-        namecard.image?.let { viewHolder.image.setImageResource(it) }
+//        namecard.image?.let { viewHolder.image.setImageResource(it) }
         viewHolder.tvIndustry.text = namecard.industry
         viewHolder.tvRole.text = namecard.role
         viewHolder.tvLinkedin.text = namecard.linkedin

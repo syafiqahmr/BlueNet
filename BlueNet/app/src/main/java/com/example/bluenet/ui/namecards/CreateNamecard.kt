@@ -1,5 +1,6 @@
 package com.example.bluenet.ui.namecards
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -7,9 +8,12 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -19,19 +23,22 @@ import com.example.bluenet.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 
 @Suppress("DEPRECATION")
 class CreateNamecard() : AppCompatActivity() {
 
     private var role = "Entrepreneur"
-    private lateinit var imageBtn: ImageView
+    private lateinit var userImage: ImageView
     private lateinit var user: FirebaseUser
+    private var selectedImage: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
-        imageBtn = findViewById(R.id.namecardPhoto)
+        userImage = findViewById(R.id.namecardPhoto)
 
         initialiseSpinner()
     }
@@ -69,84 +76,20 @@ class CreateNamecard() : AppCompatActivity() {
 
     }
 
-
-    fun imageButtonOnClick(view: View) {
-
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
-
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Choose your profile picture")
-
-        builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
-            if (options[item] == "Take Photo") {
-                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(takePicture, 0)
-            } else if (options[item] == "Choose from Gallery") {
-//                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//                startActivityForResult(pickPhoto, 1)
-                startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1)
-            } else if (options[item] == "Cancel") {
-                dialog.dismiss()
-            }
-        })
-        builder.show()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        if (resultCode != RESULT_CANCELED) {
-            when (requestCode) {
-                0 -> if (resultCode == RESULT_OK && data != null) {
-                    val selectedImage = data.extras!!["data"] as Bitmap?
-                    imageBtn.setImageBitmap(selectedImage)
-                }
-                1 -> if (resultCode == RESULT_OK && data != null) {
-                    val selectedImage = data.data
-                    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-                    if (selectedImage != null) {
-                        val cursor: Cursor? = contentResolver.query(selectedImage,
-                                filePathColumn, null, null, null)
-//                        if (cursor != null) {
-//                            cursor.moveToFirst()
-//                            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-//                            val picturePath: String = cursor.getString(columnIndex)
-//                            imageBtn.setImageBitmap(BitmapFactory.decodeFile(picturePath))
-//                            cursor.close()
-//                        }
-                        imageBtn.setImageURI(selectedImage)
-                        val source = ImageDecoder.createSource(this.contentResolver, selectedImage)
-                        imageBtn.setImageBitmap(ImageDecoder.decodeBitmap(source))
-                    }
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-
-    private fun saveToDb(namecard: Namecard){
-        user = FirebaseAuth.getInstance().currentUser!!
-        val ref = FirebaseDatabase.getInstance().getReference("namecards")
-
-        // namecard id == uid
-        if (user != null) {
-            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     fun createOnClick(view: View) {
         val name = findViewById<EditText>(R.id.name).text.toString().trim()
         val industry = findViewById<EditText>(R.id.industry).text.toString().trim()
         val company = findViewById<EditText>(R.id.company).text.toString().trim()
-        val image = findViewById<ImageButton>(R.id.namecardPhoto)
+        var image = ""
         val linkedin = findViewById<EditText>(R.id.linkedin).text.toString().trim()
+
+        if (selectedImage != null) {
+            image = selectedImage.toString()
+        }
 
         if (name != "" && company != ""){
             // save to db
-            val namecard = Namecard(name, company, null, industry, role, linkedin)
+            val namecard = Namecard(name, company, image, industry, role, linkedin)
             saveToDb(namecard)
 
             val it = Intent(this, MainActivity::class.java)
@@ -160,6 +103,79 @@ class CreateNamecard() : AppCompatActivity() {
             findViewById<EditText>(R.id.company).requestFocus()
         }
     }
+
+
+    fun imageButtonOnClick(view: View) {
+
+        Log.d("RegisterActivity","Image button clicked")
+        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Choose your profile picture")
+
+        builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
+            if (options[item] == "Take Photo") {
+                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(takePicture, 0)
+            } else if (options[item] == "Choose from Gallery") {
+                startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1)
+            } else if (options[item] == "Cancel") {
+                dialog.dismiss()
+            }
+        })
+        builder.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d("RegisterActivity","Image data received")
+        if (resultCode != RESULT_CANCELED) {
+            when (requestCode) {
+                0 -> if (resultCode == RESULT_OK && data != null) {
+                    val selectedImage = data.extras!!["data"] as Bitmap?
+                    userImage.setImageBitmap(selectedImage)
+                }
+                1 -> if (resultCode == RESULT_OK && data != null) {
+                    selectedImage = data.data
+                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
+                    val bitmapDrawable = BitmapDrawable(bitmap)
+                    userImage.setBackgroundDrawable(bitmapDrawable)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+
+    private fun saveToDb(namecard: Namecard){
+        val filename = UUID.randomUUID().toString()
+        var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
+
+        imageRef.putFile(selectedImage!!)
+            .addOnSuccessListener {
+                Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
+
+                imageRef.downloadUrl.addOnSuccessListener {
+                    it.toString()
+                    Log.d("RegisterActivity", "File location $it")
+
+                }
+            }
+
+        user = FirebaseAuth.getInstance().currentUser!!
+        val ref = FirebaseDatabase.getInstance().getReference("namecards")
+
+
+        // namecard id == uid
+        if (user != null) {
+            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
+                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
 
 }
 

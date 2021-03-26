@@ -3,6 +3,7 @@ package com.example.bluenet.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -39,6 +40,8 @@ class Login : AppCompatActivity() {
 
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
+
+                Log.i("Authenticate", task.toString());
                 if (task.isSuccessful) {
                     // Sign in success, navigate to home
                     val intent = Intent(this, MainActivity::class.java)
