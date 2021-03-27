@@ -68,6 +68,31 @@ class MyNamecardFragment : Fragment() {
 
         initialiseSpinner()
 
+        val spinnerRole = fragmentMyNamecardBinding.spinnerRole
+        val spinnerIndustry = fragmentMyNamecardBinding.spinnerIndustry
+
+        // set event listener for role spinner
+        spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                role = parentView?.getItemAtPosition(position).toString()
+                Log.i("role",role)
+            }
+        })
+
+        // set event listener for industry spinner
+        spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                industry = parentView?.getItemAtPosition(position).toString()
+                Log.i("industry", industry)
+            }
+        })
+
         // set button event listener
         val saveButton = fragmentMyNamecardBinding.buttonSave
         saveButton.setOnClickListener {
@@ -136,25 +161,6 @@ class MyNamecardFragment : Fragment() {
             }
         }
 
-        // set event listener for role spinner
-        spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
-
-            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
-                role = parentView?.getItemAtPosition(position).toString()
-            }
-        })
-
-        // set event listener for industry spinner
-        spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
-
-            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
-                industry = parentView?.getItemAtPosition(position).toString()
-            }
-        })
 
     }
 
@@ -171,7 +177,9 @@ class MyNamecardFragment : Fragment() {
                 Log.d("updateProfile", namecard?.image.toString())
                 // TODO: Need display those with spinner
                 fragmentMyNamecardBinding.name.setText(namecard.name)
-                fragmentMyNamecardBinding.industry.setText(namecard.industry)
+//                fragmentMyNamecardBinding.industry.setText(namecard.industry)
+                industry = namecard.industry
+                role = namecard.role
                 fragmentMyNamecardBinding.company.setText(namecard.company)
                 fragmentMyNamecardBinding.linkedin.setText(namecard.linkedin)
 //                if (namecard.image != ""){
@@ -253,12 +261,9 @@ class MyNamecardFragment : Fragment() {
         var image = image
 
 
-
-
-        // TODO: Industry should be spinner
-
         if (name != "" && company != "" && role != "All roles" && industry != "All industries"){
             // update db
+                Log.d("First If", "Am here")
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecard = Namecard(name, company,  image, industry, role, linkedin)
 
@@ -266,15 +271,20 @@ class MyNamecardFragment : Fragment() {
                 Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
             }
         } else if (name == ""){
+            Log.d("First El If", "Am here")
             fragmentMyNamecardBinding.name.error = "Name is required!"
             fragmentMyNamecardBinding.name.requestFocus()
         }  else if (company == ""){
+            Log.d("Second El If", "Am here")
             fragmentMyNamecardBinding.company.error = "Name is required!"
             fragmentMyNamecardBinding.company.requestFocus()
+
         } else if(role == "All roles"){
-            Toast.makeText(this, "Please Select A Role!", Toast.LENGTH_SHORT).show()
+            Log.d("Third El If", "Am here")
+            Toast.makeText(this.activity, "Please Select A Role!", Toast.LENGTH_SHORT).show()
         } else{
-            Toast.makeText(this, "Please Select An Industry!", Toast.LENGTH_SHORT).show()
+            Log.d("Fourth El If", "Am here")
+            Toast.makeText(this.activity, "Please Select An Industry!", Toast.LENGTH_SHORT).show()
         }
     }
 
