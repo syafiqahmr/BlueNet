@@ -2,9 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.namecards.ScanNamecardFragment">
+    tools:context=".ui.namecards.ScanNamecardFragment"
+    android:background="#071A41">
 
     <LinearLayout
         android:orientation="vertical"
@@ -15,6 +17,7 @@
             android:layout_height="100dp"
             android:layout_width="180dp"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:id="@+id/imageViewNamecardScan"/>
 
         <Button
@@ -24,30 +27,162 @@
             android:text="Scan Namecard"
             android:id="@+id/buttonScan"/>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-            <TextView
-                android:layout_margin="6dp"
-                android:padding="6dp"
-                android:textSize="20sp"
-                android:text="Result"
-                android:gravity="center"
-                android:id="@+id/textviewResult"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="400dp"
+                android:layout_height="272dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.454"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.174"
+                app:srcCompat="@drawable/namecard_outline" />
+
+            <ImageView
+                android:id="@+id/namecardPhoto"
+                android:layout_width="106dp"
+                android:layout_height="122dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.071"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.093"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:background="@drawable/underline_edittext"
+                android:hint="Name"
+                android:inputType="textPersonName"
+                android:paddingLeft="25px"
+                android:paddingRight="25px"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.87"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.06" />
+
+            <EditText
+                android:id="@+id/industry"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:background="@drawable/underline_edittext"
+                android:hint="Industry (Optional)"
+                android:inputType="textPersonName"
+                android:paddingLeft="25px"
+                android:paddingRight="25px"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.864"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.693" />
+
+            <Spinner
+                android:id="@+id/spinnerRole"
+                android:layout_width="234dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/underline_edittext"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.891"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.478" />
+
+            <EditText
+                android:id="@+id/linkedin"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:background="@drawable/underline_edittext"
+                android:hint="LinkedIn (Optional)"
+                android:inputType="textPersonName"
+                android:paddingLeft="25px"
+                android:paddingRight="25px"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.864"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.918" />
+
+            <EditText
+                android:id="@+id/company"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:background="@drawable/underline_edittext"
+                android:hint="Company"
+                android:inputType="textPersonName"
+                android:paddingLeft="25px"
+                android:paddingRight="25px"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.864"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.267" />
 
             <Button
-                android:id="@+id/btCalculate"
-                android:layout_gravity="center"
-                android:text="Add namecard"
-                android:textSize="18sp"
+                android:id="@+id/buttonSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                />
-        </LinearLayout>
+                android:text="Update Namecard"
+                android:textColor="#071A41"
+                app:backgroundTint="#00BCD4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.688"
+                tools:ignore="MissingConstraints" />
+
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="111dp"
+                android:layout_height="111dp"
+                android:alpha="0.4"
+                android:src="@drawable/logo"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.055"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.844" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
