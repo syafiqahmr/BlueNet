@@ -1,9 +1,11 @@
 package com.example.bluenet.ui.namecards
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -21,6 +23,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.bluenet.R
@@ -44,6 +48,7 @@ class MyNamecardFragment : Fragment() {
     private lateinit var user: FirebaseUser
     private lateinit var userImage: ImageView
     private var selectedImage: Uri? = null
+    private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -112,7 +117,9 @@ class MyNamecardFragment : Fragment() {
 
                 builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
                     if (options[item] == "Take Photo") {
-
+                        while (!isCameraPermissionGranted()){
+                            requestForPermission()
+                        }
                         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                         startActivityForResult(takePicture, 0)
 
@@ -128,6 +135,69 @@ class MyNamecardFragment : Fragment() {
                 builder.show()
         })
 
+    }
+
+    private fun requestForPermission(){
+
+        var activity = this.activity
+
+        if (activity != null){
+
+            if (ContextCompat.checkSelfPermission(activity,
+                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                // Permission is not granted
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                } else {
+                    ActivityCompat.requestPermissions(
+                        activity,
+                        arrayOf(
+                            Manifest.permission.CAMERA
+                        ),
+                        MY_PERMISSIONS_REQUEST_CAMERA
+                    )
+                }
+            }
+
+        }
+
+    }
+
+    private fun isCameraPermissionGranted(): Boolean {
+        return this.activity?.let {
+            ActivityCompat.checkSelfPermission(
+                it,
+                Manifest.permission.CAMERA
+            )
+        } == PackageManager.PERMISSION_GRANTED
+
+    }
+
+    //for handling permissions
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_CAMERA -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    requestForPermission()
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
     private fun initialiseSpinner(){
