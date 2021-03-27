@@ -57,13 +57,12 @@
             app:layout_constraintTop_toTopOf="@+id/imageView5"
             app:layout_constraintVertical_bias="0.06" />
 
-        <EditText
-            android:id="@+id/industry"
+        <Spinner
+            android:id="@+id/spinnerIndustry"
             android:layout_width="230dp"
             android:layout_height="40dp"
             android:background="@drawable/underline_edittext"
-            android:hint="Industry (Optional)"
-            android:inputType="textPersonName"
+            android:hint="Industry"
             android:paddingLeft="25px"
             android:paddingRight="25px"
             android:textColor="#FFFFFF"
@@ -79,8 +78,8 @@
 
         <Spinner
             android:id="@+id/spinnerRole"
-            android:layout_width="234dp"
-            android:layout_height="38dp"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/underline_edittext"
             android:textColor="#FFFFFF"

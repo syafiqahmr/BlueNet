@@ -24,13 +24,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.fragment_my_namecard.*
 import java.util.*
 
 
 @Suppress("DEPRECATION")
 class CreateNamecard() : AppCompatActivity() {
 
-    private var role = "Entrepreneur"
+    private var role = "All roles"
+    private var industry = "All industries"
     private lateinit var userImage: ImageView
     private lateinit var user: FirebaseUser
     private var selectedImage: Uri? = null
@@ -39,6 +41,9 @@ class CreateNamecard() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
         userImage = findViewById(R.id.namecardPhoto)
+
+        //initialise default image
+        userImage.setImageResource(R.drawable.profile_avatar)
 
         initialiseSpinner()
     }
@@ -51,6 +56,7 @@ class CreateNamecard() : AppCompatActivity() {
         // TODO: Make Industry a spinner also like filter
 
         val spinnerRole = findViewById<Spinner>(R.id.role)
+        val spinnerIndustry = findViewById<Spinner>(R.id.industry)
 
         // Initialise role spinner
         ArrayAdapter.createFromResource(
@@ -64,7 +70,19 @@ class CreateNamecard() : AppCompatActivity() {
             spinnerRole?.adapter = adapter
         }
 
-        // set event listener for industry spinner
+        // Initialise role spinner
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.industries,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinnerIndustry?.adapter = adapter
+        }
+
+        // set event listener for role spinner
         spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
@@ -74,11 +92,20 @@ class CreateNamecard() : AppCompatActivity() {
             }
         })
 
+        // set event listener for role spinner
+        spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                industry = parentView?.getItemAtPosition(position).toString()
+            }
+        })
+
     }
 
     fun createOnClick(view: View) {
         val name = findViewById<EditText>(R.id.name).text.toString().trim()
-        val industry = findViewById<EditText>(R.id.industry).text.toString().trim()
         val company = findViewById<EditText>(R.id.company).text.toString().trim()
         var image = ""
         val linkedin = findViewById<EditText>(R.id.linkedin).text.toString().trim()
@@ -87,7 +114,7 @@ class CreateNamecard() : AppCompatActivity() {
             image = selectedImage.toString()
         }
 
-        if (name != "" && company != ""){
+        if (name != "" && company != "" && role != "All roles" && industry != "All industries"){
             // save to db
             val namecard = Namecard(name, company, image, industry, role, linkedin)
             saveToDb(namecard)
@@ -101,6 +128,10 @@ class CreateNamecard() : AppCompatActivity() {
         }  else if (company.isBlank()){
             findViewById<EditText>(R.id.company).error = "Company is required!"
             findViewById<EditText>(R.id.company).requestFocus()
+        } else if(role == "All roles"){
+            Toast.makeText(this, "Please Select A Role!", Toast.LENGTH_SHORT).show()
+        } else{
+            Toast.makeText(this, "Please Select An Industry!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -131,7 +162,7 @@ class CreateNamecard() : AppCompatActivity() {
         Log.d("RegisterActivity","Image data received")
         if (resultCode != RESULT_CANCELED) {
             when (requestCode) {
-                0 -> if (resultCode == RESULT_OK && data != null) {
+                2 -> if (resultCode == RESULT_OK && data != null) {
                     val selectedImage = data.extras!!["data"] as Bitmap?
                     userImage.setImageBitmap(selectedImage)
                 }
