@@ -32,8 +32,7 @@ import com.google.mlkit.vision.text.TextRecognition
 class ScanNamecardFragment : Fragment() {
     private lateinit var fragmentScanNamecardBinding: FragmentScanNamecardBinding
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
-
-
+    private var textExtracted = ArrayList<String>()
 
 
     override fun onCreateView(
@@ -53,7 +52,6 @@ class ScanNamecardFragment : Fragment() {
             scanNamecardButtonOnClick(it)
         }
 
-        test()
     }
 
 
@@ -94,7 +92,6 @@ class ScanNamecardFragment : Fragment() {
                 }
                 1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.data
-                    Log.i("selectedImage", selectedImage.toString())
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                     if (selectedImage != null) {
                         val cursor: Cursor? = this.activity?.contentResolver?.query(selectedImage,
@@ -102,6 +99,7 @@ class ScanNamecardFragment : Fragment() {
                         imageView.setImageURI(selectedImage)
                         val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
                         imageView.setImageBitmap(ImageDecoder.decodeBitmap(source))
+                        analyze()
                     }
                 }
             }
@@ -114,9 +112,12 @@ class ScanNamecardFragment : Fragment() {
 
         val bitmap = fragmentScanNamecardBinding.imageViewNamecardScan.drawable.toBitmap()
         val image = InputImage.fromBitmap(bitmap, 0)
+        Log.i("test", "hi")
         val result = recognizer.process(image)
                 .addOnSuccessListener { visionText ->
                     extractText(visionText)
+                    extractInfo()
+
                     Toast.makeText(this.activity, "Success", Toast.LENGTH_SHORT)
                 }
                 .addOnFailureListener { e ->
@@ -129,13 +130,15 @@ class ScanNamecardFragment : Fragment() {
 
     private fun extractText(result: Text){
         val resultText = result.text
+        Log.i("resultText", resultText)
         for (block in result.textBlocks) {
             val blockText = block.text
             val blockCornerPoints = block.cornerPoints
             val blockFrame = block.boundingBox
+            textExtracted = ArrayList<String>()
             for (line in block.lines) {
                 val lineText = line.text
-                fragmentScanNamecardBinding.textviewResult.text = lineText
+                textExtracted.add(lineText)
             }
         }
     }
@@ -206,19 +209,14 @@ class ScanNamecardFragment : Fragment() {
         }
     }
 
-    private fun test(){
+    private fun extractInfo(){
 
-        Log.i("test", "start test")
-        var textarr = ArrayList<String> ()
-
-        textarr.add("Ong Kai Min")
-        textarr.add("linkedin.com/in/kaimin")
-        textarr.add("PhoneNumber: 91131622")
-
-        var extraction = NamecardDetailsExtraction(textarr)
+        var extraction = NamecardDetailsExtraction(textExtracted)
         extraction.extractName()?.let { Log.i("name", it) }
         extraction.extractLinkedin()?.let { Log.i("linkedin", it) }
-        extraction.extractPhoneNumber()?.let { Log.i("phone", it) }
+
+        fragmentScanNamecardBinding.name.setText(extraction.extractName())
+        fragmentScanNamecardBinding.linkedin.setText(extraction.extractLinkedin())
     }
 
 
