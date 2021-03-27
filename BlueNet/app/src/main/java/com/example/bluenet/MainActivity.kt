@@ -1,5 +1,9 @@
 package com.example.bluenet
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import android.util.Log
@@ -23,6 +27,49 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        var PERMISSION_REQUEST_FINE_LOCATION = 1;
+        var PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("This app needs background location access")
+                        builder.setMessage("Please grant location access so this app can detect beacons in the background.")
+                        builder.setPositiveButton(android.R.string.ok, null)
+                        builder.setOnDismissListener {
+                            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                                    PERMISSION_REQUEST_BACKGROUND_LOCATION)
+                        }
+                        builder.show()
+                    } else {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Functionality limited")
+                        builder.setMessage("Since background location access has not been granted, this app will not be able to discover beacons in the background.  Please go to Settings -> Applications -> Permissions and grant background location access to this app.")
+                        builder.setPositiveButton(android.R.string.ok, null)
+                        builder.setOnDismissListener { }
+                        builder.show()
+                    }
+                }
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                            PERMISSION_REQUEST_FINE_LOCATION)
+                } else {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Functionality limited")
+                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons.  Please go to Settings -> Applications -> Permissions and grant location access to this app.")
+                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.setOnDismissListener { }
+                    builder.show()
+                }
+            }
+        }
 
         beaconManager = BeaconManager.getInstanceForApplication(this)
         beaconManager!!.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"))
@@ -61,10 +108,14 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         beaconManager!!.removeAllRangeNotifiers()
         beaconManager!!.addRangeNotifier(RangeNotifier { beacons, region ->
             if (beacons.isNotEmpty()) {
-                Log.i(
-                        "Beacon",
-                        "There are " + beacons.size + " beacons detected."
-                )
+                val firstBeacon = beacons.iterator().next()
+                runOnUiThread {
+                    Log.i("Beacon", firstBeacon.toString() + " is about " + firstBeacon.distance + " meters away.")
+                    Log.i(
+                            "Beacon",
+                            "There are " + beacons.size + " beacons detected."
+                    )
+                }
             }
         })
         try {

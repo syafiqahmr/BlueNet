@@ -31,7 +31,7 @@
         app:layout_constraintStart_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="@+id/imageView5"
         app:layout_constraintVertical_bias="0.12"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/profile_avatar" />
 
     <EditText
         android:id="@+id/name"
@@ -55,8 +55,8 @@
 
     <Spinner
         android:id="@+id/role"
-        android:layout_width="234dp"
-        android:layout_height="38dp"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
         android:layout_weight="1"
         android:background="@drawable/underline_edittext"
         android:textColor="#FFFFFF"
@@ -70,13 +70,12 @@
         app:layout_constraintTop_toTopOf="@+id/imageView5"
         app:layout_constraintVertical_bias="0.495" />
 
-    <EditText
+    <Spinner
         android:id="@+id/industry"
         android:layout_width="230dp"
         android:layout_height="40dp"
         android:background="@drawable/underline_edittext"
-        android:hint="Industry (Optional)"
-        android:inputType="text"
+        android:hint="Industry"
         android:paddingLeft="25px"
         android:paddingRight="25px"
         android:textColor="#FFFFFF"

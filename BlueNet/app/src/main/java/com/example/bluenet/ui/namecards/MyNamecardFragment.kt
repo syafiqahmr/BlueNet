@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentMyNamecardBinding
@@ -38,7 +39,8 @@ class MyNamecardFragment : Fragment() {
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
     private lateinit var fragmentMyNamecardBinding: FragmentMyNamecardBinding
 
-    private var role = "Entrepreneur"
+    private var role = "All roles"
+    private var industry = "All industries"
     private lateinit var user: FirebaseUser
     private lateinit var userImage: ImageView
     private var selectedImage: Uri? = null
@@ -103,10 +105,9 @@ class MyNamecardFragment : Fragment() {
 
     }
 
-
-
     private fun initialiseSpinner(){
         val spinnerRole = fragmentMyNamecardBinding.spinnerRole
+        val spinnerIndustry = fragmentMyNamecardBinding.spinnerIndustry
 
         this.activity?.let {
 
@@ -121,15 +122,37 @@ class MyNamecardFragment : Fragment() {
                 // Apply the adapter to the spinner
                 spinnerRole.adapter = adapter
             }
+
+            // Initialise role spinner
+            ArrayAdapter.createFromResource(
+                it,
+                R.array.industries,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                spinnerIndustry.adapter = adapter
+            }
         }
 
-        // set event listener for industry spinner
+        // set event listener for role spinner
         spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
+            }
+        })
+
+        // set event listener for industry spinner
+        spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                industry = parentView?.getItemAtPosition(position).toString()
             }
         })
 
@@ -151,9 +174,16 @@ class MyNamecardFragment : Fragment() {
                 fragmentMyNamecardBinding.industry.setText(namecard.industry)
                 fragmentMyNamecardBinding.company.setText(namecard.company)
                 fragmentMyNamecardBinding.linkedin.setText(namecard.linkedin)
+//                if (namecard.image != ""){
+//                val bitmap = MediaStore.Images.Media.getBitmap(this.requireActivity().contentResolver, namecard.image.toUri())
+//                val bitmapDrawable = BitmapDrawable(bitmap)
+//                userImage.setBackgroundDrawable(bitmapDrawable)
+//                }
+
                 Glide.with(this)
                         .load(namecard.image)
                         .into(fragmentMyNamecardBinding.namecardPhoto)
+//                userImage.setImageURI(namecard.image.toUri())
             }
 
         }.addOnFailureListener{
@@ -172,12 +202,19 @@ class MyNamecardFragment : Fragment() {
                 0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.extras!!["data"] as Bitmap?
                     userImage.setImageBitmap(selectedImage)
+//                    Glide.with(this)
+//                            .load(selectedImage.toUri)
+//                            .into(fragmentMyNamecardBinding.namecardPhoto)
                 }
                 1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     selectedImage = data.data
-                    val bitmap = MediaStore.Images.Media.getBitmap(this.requireActivity().contentResolver, selectedImage)
-                    val bitmapDrawable = BitmapDrawable(bitmap)
-                    userImage.setBackgroundDrawable(bitmapDrawable)
+//                    val bitmap = MediaStore.Images.Media.getBitmap(this.requireActivity().contentResolver, selectedImage)
+//                    val bitmapDrawable = BitmapDrawable(bitmap)
+//                    userImage.setBackgroundDrawable(bitmapDrawable)
+                    Log.i("URI", selectedImage.toString())
+                    Glide.with(this)
+                            .load(selectedImage)
+                            .into(fragmentMyNamecardBinding.namecardPhoto)
                 }
             }
             super.onActivityResult(requestCode, resultCode, data)
@@ -211,7 +248,6 @@ class MyNamecardFragment : Fragment() {
 
     private fun sameDetailsToFirebase(image: String) {
         val name = fragmentMyNamecardBinding.name.text.toString().trim()
-        val industry = fragmentMyNamecardBinding.industry.text.toString().trim()
         val company = fragmentMyNamecardBinding.company.text.toString().trim()
         val linkedin = fragmentMyNamecardBinding.linkedin.text.toString().trim()
         var image = image
@@ -221,7 +257,7 @@ class MyNamecardFragment : Fragment() {
 
         // TODO: Industry should be spinner
 
-        if (name != "" && company != ""){
+        if (name != "" && company != "" && role != "All roles" && industry != "All industries"){
             // update db
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecard = Namecard(name, company,  image, industry, role, linkedin)
@@ -235,6 +271,10 @@ class MyNamecardFragment : Fragment() {
         }  else if (company == ""){
             fragmentMyNamecardBinding.company.error = "Name is required!"
             fragmentMyNamecardBinding.company.requestFocus()
+        } else if(role == "All roles"){
+            Toast.makeText(this, "Please Select A Role!", Toast.LENGTH_SHORT).show()
+        } else{
+            Toast.makeText(this, "Please Select An Industry!", Toast.LENGTH_SHORT).show()
         }
     }
 
