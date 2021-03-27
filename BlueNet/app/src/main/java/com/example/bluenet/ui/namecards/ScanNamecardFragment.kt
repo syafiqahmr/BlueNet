@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,23 +17,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.navigation.findNavController
+import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentScanNamecardBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ScanNamecardFragment : Fragment() {
     private lateinit var fragmentScanNamecardBinding: FragmentScanNamecardBinding
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
     private var textExtracted = ArrayList<String>()
+    private lateinit var role : String
+    private var selectedImage: Uri? = null
+    private lateinit var user: FirebaseUser
 
 
     override fun onCreateView(
@@ -51,6 +63,41 @@ class ScanNamecardFragment : Fragment() {
         fragmentScanNamecardBinding.buttonScan.setOnClickListener {
             scanNamecardButtonOnClick(it)
         }
+        fragmentScanNamecardBinding.buttonSave.setOnClickListener {
+            createOnClick(it)
+        }
+
+        initialiseSpinner()
+    }
+
+    private fun initialiseSpinner() {
+        // TODO: Make Industry a spinner also like filter
+
+        val spinnerRole = fragmentScanNamecardBinding.spinnerRole
+
+        // Initialise role spinner
+        this.activity?.let {
+            ArrayAdapter.createFromResource(
+                    it,
+                R.array.roles,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinnerRole?.adapter = adapter
+        }
+        }
+
+        // set event listener for industry spinner
+        spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                role = parentView?.getItemAtPosition(position).toString()
+            }
+        })
 
     }
 
@@ -143,8 +190,6 @@ class ScanNamecardFragment : Fragment() {
         }
     }
 
-
-
     private fun requestForPermission(){
 
         var activity = this.activity
@@ -172,7 +217,6 @@ class ScanNamecardFragment : Fragment() {
 
     }
 
-
     private fun isCameraPermissionGranted(): Boolean {
         return this.activity?.let {
             ActivityCompat.checkSelfPermission(
@@ -182,7 +226,6 @@ class ScanNamecardFragment : Fragment() {
         } == PackageManager.PERMISSION_GRANTED
 
     }
-
 
     //for handling permissions
     override fun onRequestPermissionsResult(
@@ -219,5 +262,55 @@ class ScanNamecardFragment : Fragment() {
         fragmentScanNamecardBinding.linkedin.setText(extraction.extractLinkedin())
     }
 
+    private fun createOnClick(view: View){
+        val name = fragmentScanNamecardBinding.name.text.toString().trim()
+        val industry = fragmentScanNamecardBinding.industry.text.toString().trim()
+        val company = fragmentScanNamecardBinding.company.text.toString().trim()
+        var image = ""
+        val linkedin = fragmentScanNamecardBinding.linkedin.text.toString().trim()
 
+        if (selectedImage != null) {
+            image = selectedImage.toString()
+        }
+
+        if (name != "" && company != ""){
+            // save to db
+            val namecard = Namecard(name, company, image, industry, role, linkedin)
+            // TODO: need to add the namecard list
+            saveToDb(namecard)
+
+            view.findNavController().navigate(R.id.navigation_namecards)
+
+        } else if (name.isBlank()){
+            fragmentScanNamecardBinding.name.error = "Name is required!"
+            fragmentScanNamecardBinding.name.requestFocus()
+        }  else if (company.isBlank()){
+            fragmentScanNamecardBinding.company.error = "Company is required!"
+            fragmentScanNamecardBinding.company.requestFocus()
+        }
+    }
+
+    private fun saveToDb(namecard: Namecard) {
+        val filename = UUID.randomUUID().toString()
+        var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
+
+//        imageRef.putFile(selectedImage!!)
+//                .addOnSuccessListener {
+//                    Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
+//
+//                    imageRef.downloadUrl.addOnSuccessListener {
+//                        it.toString()
+//                        Log.d("RegisterActivity", "File location $it")
+//
+//                    }
+//                }
+
+        user = FirebaseAuth.getInstance().currentUser!!
+        val ref = FirebaseDatabase.getInstance().getReference("namecards")
+        val namecardId = ref.push().key.toString()
+
+        ref.child(namecardId).setValue(namecard).addOnCompleteListener {
+            Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
