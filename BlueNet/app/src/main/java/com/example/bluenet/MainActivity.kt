@@ -1,5 +1,9 @@
 package com.example.bluenet
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import android.util.Log
@@ -11,15 +15,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.bluenet.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import org.altbeacon.beacon.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BeaconConsumer {
     private lateinit var binding: ActivityMainBinding
     private var beaconManager: BeaconManager? = null
-
-    private lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,22 +28,67 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        var PERMISSION_REQUEST_FINE_LOCATION = 1;
+        var PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("This app needs background location access")
+                        builder.setMessage("Please grant location access so this app can detect beacons in the background.")
+                        builder.setPositiveButton(android.R.string.ok, null)
+                        builder.setOnDismissListener {
+                            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                                    PERMISSION_REQUEST_BACKGROUND_LOCATION)
+                        }
+                        builder.show()
+                    } else {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Functionality limited")
+                        builder.setMessage("Since background location access has not been granted, this app will not be able to discover beacons in the background.  Please go to Settings -> Applications -> Permissions and grant background location access to this app.")
+                        builder.setPositiveButton(android.R.string.ok, null)
+                        builder.setOnDismissListener { }
+                        builder.show()
+                    }
+                }
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                            PERMISSION_REQUEST_FINE_LOCATION)
+                } else {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Functionality limited")
+                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons.  Please go to Settings -> Applications -> Permissions and grant location access to this app.")
+                    builder.setPositiveButton(android.R.string.ok, null)
+                    builder.setOnDismissListener { }
+                    builder.show()
+                }
+            }
+        }
+
         beaconManager = BeaconManager.getInstanceForApplication(this)
         beaconManager!!.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"))
+        beaconManager!!.bind(this)
 
-        user = FirebaseAuth.getInstance().currentUser!!
+        var user = FirebaseAuth.getInstance().currentUser!!.uid
 
-//        val beacon = Beacon.Builder()
-//                .setId1(user.uid)
-//                .setId2("1")
-//                .setId3("2")
-//                .setManufacturer(0x0118)
-//                .setTxPower(-59)
-//                .build()
-//        val beaconParser = BeaconParser()
-//                .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
-//        val beaconTransmitter = BeaconTransmitter(applicationContext, beaconParser)
-//        beaconTransmitter.startAdvertising(beacon)
+        val beacon = Beacon.Builder()
+                .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
+                .setId2("1")
+                .setId3("2")
+                .setManufacturer(0x0118)
+                .setTxPower(-59)
+                .setDataFields(listOf(1.toLong()))
+                .build()
+        val beaconParser = BeaconParser()
+                .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
+        val beaconTransmitter = BeaconTransmitter(applicationContext, beaconParser)
+        beaconTransmitter.startAdvertising(beacon)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
@@ -50,32 +96,36 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_traffic, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
+                setOf(
+                        R.id.navigation_traffic, R.id.navigation_dashboard, R.id.navigation_notifications
+                )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
-    fun onBeaconServiceConnect() {
+    override fun onBeaconServiceConnect() {
         beaconManager!!.removeAllRangeNotifiers()
         beaconManager!!.addRangeNotifier(RangeNotifier { beacons, region ->
             if (beacons.isNotEmpty()) {
-                Log.i(
-                    "Beacon",
-                    "There are " + beacons.size + " beacons detected."
-                )
+                val firstBeacon = beacons.iterator().next()
+                runOnUiThread {
+                    Log.i("Beacon", firstBeacon.toString() + " is about " + firstBeacon.distance + " meters away.")
+                    Log.i(
+                            "Beacon",
+                            "There are " + beacons.size + " beacons detected."
+                    )
+                }
             }
         })
         try {
             beaconManager!!.startRangingBeaconsInRegion(
-                Region(
-                    "myRangingUniqueId",
-                    null,
-                    null,
-                    null
-                )
+                    Region(
+                            "myRangingUniqueId",
+                            null,
+                            null,
+                            null
+                    )
             )
         } catch (e: RemoteException) {
         }
