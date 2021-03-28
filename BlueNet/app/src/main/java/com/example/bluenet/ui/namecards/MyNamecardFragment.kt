@@ -1,31 +1,25 @@
 package com.example.bluenet.ui.namecards
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentMyNamecardBinding
@@ -35,8 +29,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import java.io.File
+import kotlinx.android.synthetic.main.fragment_namecards.*
 import java.util.*
+
 
 class MyNamecardFragment : Fragment() {
 
@@ -48,12 +43,13 @@ class MyNamecardFragment : Fragment() {
     private lateinit var user: FirebaseUser
     private lateinit var userImage: ImageView
     private var selectedImage: Uri? = null
+    private var originalImage: Uri? = null
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_my_namecard, container, false)
     }
@@ -68,7 +64,7 @@ class MyNamecardFragment : Fragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Log.i("updateProfile","Activity created")
+        Log.i("updateProfile", "Activity created")
         super.onActivityCreated(savedInstanceState)
 
         initialiseSpinner()
@@ -83,7 +79,7 @@ class MyNamecardFragment : Fragment() {
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
-                Log.i("role",role)
+                Log.i("role", role)
             }
         })
 
@@ -109,30 +105,30 @@ class MyNamecardFragment : Fragment() {
 
         userImage.setOnClickListener(View.OnClickListener() {
 
-                Log.i("updateProfile","Image button clicked")
-                val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+            Log.i("updateProfile", "Image button clicked")
+            val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
 
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
-                builder.setTitle("Choose your profile picture")
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity)
+            builder.setTitle("Choose your profile picture")
 
-                builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
-                    if (options[item] == "Take Photo") {
-                        while (!isCameraPermissionGranted()){
-                            requestForPermission()
-                        }
-                        val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        startActivityForResult(takePicture, 0)
-
-                    } else if (options[item] == "Choose from Gallery") {
-
-                        val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                        startActivityForResult(pickPhoto, 1)
-
-                    } else if (options[item] == "Cancel") {
-                        dialog.dismiss()
+            builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
+                if (options[item] == "Take Photo") {
+                    while (!isCameraPermissionGranted()) {
+                        requestForPermission()
                     }
-                })
-                builder.show()
+                    val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    startActivityForResult(takePicture, 0)
+
+                } else if (options[item] == "Choose from Gallery") {
+
+                    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(pickPhoto, 1)
+
+                } else if (options[item] == "Cancel") {
+                    dialog.dismiss()
+                }
+            })
+            builder.show()
         })
 
     }
@@ -144,7 +140,7 @@ class MyNamecardFragment : Fragment() {
         if (activity != null){
 
             if (ContextCompat.checkSelfPermission(activity,
-                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                 // Permission is not granted
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
                     // Show an explanation to the user *asynchronously* -- don't block
@@ -152,11 +148,11 @@ class MyNamecardFragment : Fragment() {
                     // sees the explanation, try again to request the permission.
                 } else {
                     ActivityCompat.requestPermissions(
-                        activity,
-                        arrayOf(
-                            Manifest.permission.CAMERA
-                        ),
-                        MY_PERMISSIONS_REQUEST_CAMERA
+                            activity,
+                            arrayOf(
+                                    Manifest.permission.CAMERA
+                            ),
+                            MY_PERMISSIONS_REQUEST_CAMERA
                     )
                 }
             }
@@ -168,8 +164,8 @@ class MyNamecardFragment : Fragment() {
     private fun isCameraPermissionGranted(): Boolean {
         return this.activity?.let {
             ActivityCompat.checkSelfPermission(
-                it,
-                Manifest.permission.CAMERA
+                    it,
+                    Manifest.permission.CAMERA
             )
         } == PackageManager.PERMISSION_GRANTED
 
@@ -177,8 +173,8 @@ class MyNamecardFragment : Fragment() {
 
     //for handling permissions
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_CAMERA -> {
@@ -208,9 +204,9 @@ class MyNamecardFragment : Fragment() {
 
             // Initialise role spinner
             ArrayAdapter.createFromResource(
-                it,
-                R.array.roles,
-                android.R.layout.simple_spinner_item
+                    it,
+                    R.array.roles,
+                    android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -220,9 +216,9 @@ class MyNamecardFragment : Fragment() {
 
             // Initialise role spinner
             ArrayAdapter.createFromResource(
-                it,
-                R.array.industries,
-                android.R.layout.simple_spinner_item
+                    it,
+                    R.array.industries,
+                    android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -244,12 +240,10 @@ class MyNamecardFragment : Fragment() {
             
 
             if (namecard != null) {
-                Log.d("updateProfile", namecard?.image.toString())
+//                Log.d("updateProfile", namecard?.image.toString())
                 // TODO: Need display those with spinner
                 fragmentMyNamecardBinding.name.setText(namecard.name)
 //                fragmentMyNamecardBinding.industry.setText(namecard.industry)
-                industry = namecard.industry
-                role = namecard.role
                 fragmentMyNamecardBinding.company.setText(namecard.company)
                 fragmentMyNamecardBinding.linkedin.setText(namecard.linkedin)
 //                if (namecard.image != ""){
@@ -262,6 +256,33 @@ class MyNamecardFragment : Fragment() {
                         .load(namecard.image)
                         .into(fragmentMyNamecardBinding.namecardPhoto)
 //                userImage.setImageURI(namecard.image.toUri())
+
+                originalImage = namecard.image.toUri()
+                industry = namecard.industry
+                role = namecard.role
+//                Log.d("updateProfile", "industry: $industry, role: $role")
+
+//                Update Role
+                val roleAdapter = ArrayAdapter.createFromResource(this.requireActivity(), R.array.roles, android.R.layout.simple_spinner_item)
+
+                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerRole.setAdapter(roleAdapter)
+                if (role != null) {
+                    val spinnerRolePosition = roleAdapter.getPosition(role)
+                    spinnerRole.setSelection(spinnerRolePosition)
+                }
+
+//                Update industry
+                val industryAdapter = ArrayAdapter.createFromResource(this.requireActivity(), R.array.industries, android.R.layout.simple_spinner_item)
+
+                industryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerIndustry.setAdapter(industryAdapter)
+                if (industry != null) {
+                    val spinnerIndustryPosition = industryAdapter.getPosition(industry)
+                    spinnerIndustry.setSelection(spinnerIndustryPosition)
+                }
+
+
             }
 
         }.addOnFailureListener{
@@ -274,7 +295,7 @@ class MyNamecardFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        Log.d("updateProfile","image received")
+        Log.d("updateProfile", "image received")
         if (resultCode != AppCompatActivity.RESULT_CANCELED) {
             when (requestCode) {
                 0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
@@ -302,8 +323,12 @@ class MyNamecardFragment : Fragment() {
     private fun saveNamecard(){
 
         Log.d("updateProfile", "Save NameCard")
-        if (selectedImage == null) return
-        saveImageToFirebase()
+        if (selectedImage != null){
+            saveImageToFirebase()
+        }else{
+            sameDetailsToFirebase(originalImage.toString())
+        }
+
     }
 
 
@@ -333,9 +358,9 @@ class MyNamecardFragment : Fragment() {
 
         if (name != "" && company != "" && role != "All roles" && industry != "All industries"){
             // update db
-                Log.d("First If", "Am here")
+                Log.d("updateProfile", "industry: $industry, role: $role")
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
-            val namecard = Namecard(name, company,  image, industry, role, linkedin)
+            val namecard = Namecard(name, company, image, industry, role, linkedin)
 
             ref.child(user.uid).setValue(namecard).addOnCompleteListener {
                 Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
