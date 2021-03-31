@@ -135,30 +135,26 @@ class ScanNamecardFragment : Fragment() {
                 0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.extras!!["data"] as Bitmap?
                     imageView.setImageBitmap(selectedImage)
-                    analyze()
+                    val image = InputImage.fromBitmap(selectedImage, 0)
+                    analyze(image)
                 }
                 1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     val selectedImage = data.data
-                    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                     if (selectedImage != null) {
-                        val cursor: Cursor? = this.activity?.contentResolver?.query(selectedImage,
-                                filePathColumn, null, null, null)
-                        imageView.setImageURI(selectedImage)
                         val source = ImageDecoder.createSource(this.requireActivity().contentResolver, selectedImage)
                         imageView.setImageBitmap(ImageDecoder.decodeBitmap(source))
-                        analyze()
+                        val inputImage = InputImage.fromFilePath(this.activity, selectedImage)
+                        analyze(inputImage)
                     }
                 }
             }
+            Toast.makeText(this.activity, "Analyzed!", Toast.LENGTH_SHORT)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun analyze(){
+    private fun analyze(image: InputImage){
         val recognizer = TextRecognition.getClient()
-
-        val bitmap = fragmentScanNamecardBinding.imageViewNamecardScan.drawable.toBitmap()
-        val image = InputImage.fromBitmap(bitmap, 0)
         Log.i("test", "hi")
         val result = recognizer.process(image)
                 .addOnSuccessListener { visionText ->
@@ -176,15 +172,11 @@ class ScanNamecardFragment : Fragment() {
     }
 
     private fun extractText(result: Text){
-        val resultText = result.text
-        Log.i("resultText", resultText)
+        textExtracted = ArrayList<String>()
         for (block in result.textBlocks) {
-            val blockText = block.text
-            val blockCornerPoints = block.cornerPoints
-            val blockFrame = block.boundingBox
-            textExtracted = ArrayList<String>()
             for (line in block.lines) {
                 val lineText = line.text
+                Log.i("added to array", lineText)
                 textExtracted.add(lineText)
             }
         }
@@ -253,7 +245,6 @@ class ScanNamecardFragment : Fragment() {
     }
 
     private fun extractInfo(){
-
         var extraction = NamecardDetailsExtraction(textExtracted)
         extraction.extractName()?.let { Log.i("name", it) }
         extraction.extractLinkedin()?.let { Log.i("linkedin", it) }

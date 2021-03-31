@@ -25,7 +25,7 @@ class NamecardDetailsExtraction (textArr : ArrayList<String>) {
     fun extractPhoneNumber(): String? {
         for (text in textArr){
             val PHONE_REGEX = "[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*\$"
-            val p: Pattern = Pattern.compile(PHONE_REGEX, Pattern.MULTILINE)
+            val p: Pattern = Pattern.compile(PHONE_REGEX)
             val m: Matcher = p.matcher(text)
             if (m.find()) {
                 return m.group()
@@ -39,14 +39,13 @@ class NamecardDetailsExtraction (textArr : ArrayList<String>) {
     fun extractLinkedin(): String? {
         for (text in textArr){
             val LINKEDIN_REGEX = "linkedin\\.com\\/in\\/.*\$"
-            val p: Pattern = Pattern.compile(LINKEDIN_REGEX, Pattern.MULTILINE)
+            val p: Pattern = Pattern.compile(LINKEDIN_REGEX)
             val m: Matcher = p.matcher(text)
             if (m.find()) {
-                return m.group()
+                return text
             }
         }
         Log.i("extracting", "linkedin")
-
         return null
     }
 
