@@ -6,15 +6,18 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.bluenet.databinding.ActivityMainBinding
+import com.example.bluenet.ui.register.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import org.altbeacon.beacon.*
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver
 
@@ -23,7 +26,9 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
     private lateinit var binding: ActivityMainBinding
     private var beaconManager: BeaconManager? = null
     private var backgroundPowerSaver: BackgroundPowerSaver? = null
-
+    private var crowd = -1
+    private val user = FirebaseAuth.getInstance().currentUser!!.uid
+    private val ref = Firebase.database.reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,8 +83,6 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         beaconManager!!.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"))
         beaconManager!!.bind(this)
 
-        var user = FirebaseAuth.getInstance().currentUser!!.uid
-
         val beacon = Beacon.Builder()
                 .setId1(asciiToHex(user))
                 .setId2("1")
@@ -94,6 +97,12 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         beaconTransmitter.startAdvertising(beacon)
 
         backgroundPowerSaver = BackgroundPowerSaver(this)
+
+        ref.child("users").child(user).get().addOnSuccessListener {
+            if (it.getValue(User::class.java)?.type == "Booth") {
+                crowd = 0
+            }
+        }
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
@@ -113,13 +122,17 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         beaconManager!!.removeAllRangeNotifiers()
         beaconManager!!.addRangeNotifier(RangeNotifier { beacons, region ->
             if (beacons.isNotEmpty()) {
-                val firstBeacon = beacons.iterator().next()
+                if (crowd > -1 && crowd != beacons.size) {
+                    val tfref = FirebaseDatabase.getInstance().getReference("traffic")
+                    tfref.child(user).setValue(beacons.size)
+                }
+                val beaconsIterator = beacons.iterator()
                 runOnUiThread {
-                    Log.i("Beacon", hexToASCII(firstBeacon.id1.toString()) + " is about " + firstBeacon.distance + " meters away.")
-                    Log.i(
-                            "Beacon",
-                            "There are " + beacons.size + " beacons detected."
-                    )
+                    while (beaconsIterator.hasNext()) {
+                        val newUser = hexToASCII(beaconsIterator.next().id1.toString())
+                        val ncref = FirebaseDatabase.getInstance().getReference("namecards")
+                        ncref.child(user).child(newUser!!).setValue("")
+                    }
                 }
             }
         })
