@@ -16,11 +16,17 @@ import com.example.bluenet.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import org.altbeacon.beacon.*
+import org.altbeacon.beacon.powersave.BackgroundPowerSaver
+
+
+
 
 
 class MainActivity : AppCompatActivity(), BeaconConsumer {
     private lateinit var binding: ActivityMainBinding
     private var beaconManager: BeaconManager? = null
+    private var backgroundPowerSaver: BackgroundPowerSaver? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +95,8 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
         val beaconTransmitter = BeaconTransmitter(applicationContext, beaconParser)
         beaconTransmitter.startAdvertising(beacon)
+
+        backgroundPowerSaver = BackgroundPowerSaver(this)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
