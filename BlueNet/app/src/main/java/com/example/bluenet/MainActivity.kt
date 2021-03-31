@@ -19,9 +19,6 @@ import org.altbeacon.beacon.*
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver
 
 
-
-
-
 class MainActivity : AppCompatActivity(), BeaconConsumer {
     private lateinit var binding: ActivityMainBinding
     private var beaconManager: BeaconManager? = null
