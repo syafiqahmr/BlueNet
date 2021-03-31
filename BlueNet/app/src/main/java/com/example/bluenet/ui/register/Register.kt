@@ -14,7 +14,6 @@ import com.example.bluenet.ui.login.Login
 import com.example.bluenet.ui.namecards.CreateNamecard
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import java.util.*
 
 class Register : AppCompatActivity() {
 
@@ -111,7 +110,7 @@ class Register : AppCompatActivity() {
 
 
                         // Save more details into "users" db
-                        val user = User(type, code, UUID.randomUUID().toString())
+                        val user = User(type, code)
                         val ref = FirebaseDatabase.getInstance().getReference("users")
                         ref.child(firebaseUser!!.uid).setValue(user).addOnCompleteListener {
                             Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()

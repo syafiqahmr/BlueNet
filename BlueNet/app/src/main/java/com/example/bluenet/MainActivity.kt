@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         val view = binding.root
         setContentView(view)
 
-        var PERMISSION_REQUEST_FINE_LOCATION = 1;
-        var PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
+        var PERMISSION_REQUEST_FINE_LOCATION = 1
+        var PERMISSION_REQUEST_BACKGROUND_LOCATION = 2
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         var user = FirebaseAuth.getInstance().currentUser!!.uid
 
         val beacon = Beacon.Builder()
-                .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
+                .setId1(asciiToHex(user))
                 .setId2("1")
                 .setId3("2")
                 .setManufacturer(0x0118)
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
             if (beacons.isNotEmpty()) {
                 val firstBeacon = beacons.iterator().next()
                 runOnUiThread {
-                    Log.i("Beacon", firstBeacon.toString() + " is about " + firstBeacon.distance + " meters away.")
+                    Log.i("Beacon", hexToASCII(firstBeacon.id1.toString()) + " is about " + firstBeacon.distance + " meters away.")
                     Log.i(
                             "Beacon",
                             "There are " + beacons.size + " beacons detected."
@@ -130,4 +130,27 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         } catch (e: RemoteException) {
         }
     }
+
+
+    private fun asciiToHex(asciiValue: String): String? {
+        val chars = asciiValue.toCharArray()
+        val hex = StringBuffer()
+        for (i in chars.indices) {
+            hex.append(Integer.toHexString(chars[i].toInt()))
+        }
+        return hex.toString()
+    }
+
+    private fun hexToASCII(hexValue: String): String? {
+        val output = StringBuilder("")
+        var i = 0
+        while (i < hexValue.length) {
+            val str = hexValue.substring(i, i + 2)
+            output.append(str.toInt(16).toChar())
+            i += 2
+        }
+        return output.toString()
+    }
+
+
 }
