@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
                 runOnUiThread {
                     while (beaconsIterator.hasNext()) {
                         val newUser = hexToASCII(beaconsIterator.next().id1.toString())
-                        val ncref = FirebaseDatabase.getInstance().getReference("namecards")
+                        val ncref = FirebaseDatabase.getInstance().getReference("listOfNamecards")
                         ncref.child(user).child(newUser!!).setValue("")
                     }
                 }
