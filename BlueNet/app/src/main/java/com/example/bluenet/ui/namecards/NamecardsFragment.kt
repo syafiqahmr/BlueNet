@@ -1,6 +1,8 @@
 package com.example.bluenet.ui.namecards
 
+import android.os.Build
 import android.os.Bundle
+import android.util.ArraySet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +11,19 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.bluenet.R
 import com.example.bluenet.databinding.FragmentNamecardsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_namecards.*
 
 
 class NamecardsFragment : Fragment() {
@@ -46,6 +52,7 @@ class NamecardsFragment : Fragment() {
         fragmentNamecardsBinding = FragmentNamecardsBinding.bind(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -54,8 +61,6 @@ class NamecardsFragment : Fragment() {
 
         // Initalise fake namecards data
         lvNamecards = fragmentNamecardsBinding.lvNamecards
-        arrNamecard.add(Namecard("Person1", "Company1", "", "Finance", "Entrepreneur", "linkedin.com/in/gdragon"))
-        arrNamecard.add(Namecard("Person2", "Company2", "", "Technology", "Venture Capitalist", "linkedin.com/in/gdragon"))
         refreshList()
 
     }
@@ -118,19 +123,43 @@ class NamecardsFragment : Fragment() {
 
     }
 
-    private fun retrieveDataFromDB(){
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun retrieveDataFromDB() {
+        val user = FirebaseAuth.getInstance().currentUser!!
+        var arrNamecardId: ArraySet<String> = ArraySet()
+
+
+        // retrieve list of namecards saved by the users from the db
+        val listOfNamecard = FirebaseDatabase.getInstance().getReference("listOfNamecards").child(user.uid)
+
+        val postListenerListOfNamecard = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (n in dataSnapshot.children) {
+                        val namecard = n.getValue(String::class.java)
+                        if (namecard != null) {
+                            arrNamecardId.add(namecard)
+                        }
+                    }
+                    refreshList()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("test", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        listOfNamecard.addValueEventListener(postListenerListOfNamecard)
+
+
+        // retrieve namecard info
         val ref = FirebaseDatabase.getInstance().getReference("namecards")
 
-        // TODO: Move this to db
-        var arrNamecardId: ArrayList<String> = ArrayList()
-        arrNamecardId.add("-MWK2ADdo9CCBS37Uusa")
-        arrNamecardId.add("-MWK2YOveOso2Ji-9RRk")
-
-        // Read from the database
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()){
-                    for (n in dataSnapshot.children){
+                if (dataSnapshot.exists()) {
+                    for (n in dataSnapshot.children) {
                         val namecard = n.getValue(Namecard::class.java)
                         if (namecard != null && n.key in arrNamecardId) {
                             arrNamecard.add(namecard)
