@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#071A41">
 
     <ImageView
         android:id="@+id/imageView"
@@ -14,13 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewName"
             android:text=""
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
             android:textSize="20sp"/>
 
         <TextView
@@ -28,6 +33,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/textViewCompany"
             android:text=""
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
             android:textSize="16sp"/>
 
         <TextView
@@ -35,6 +43,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/textViewIndustry"
             android:text=""
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
             android:textSize="16sp"/>
 
         <TextView
@@ -42,6 +53,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/textViewRole"
             android:text=""
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
             android:textSize="16sp"/>
 
         <TextView
@@ -49,6 +63,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/textViewLinkedin"
             android:text=""
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
             android:autoLink="web"
             android:textSize="16sp"/>
     </LinearLayout>

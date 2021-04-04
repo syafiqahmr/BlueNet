@@ -183,6 +183,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Scan Namecard"
+                android:textColor="#071A41"
+                app:backgroundTint="#eff0f0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

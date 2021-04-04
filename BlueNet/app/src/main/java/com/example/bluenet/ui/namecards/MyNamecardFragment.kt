@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -47,9 +48,9 @@ class MyNamecardFragment : Fragment() {
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_my_namecard, container, false)
     }
@@ -75,22 +76,40 @@ class MyNamecardFragment : Fragment() {
         // set event listener for role spinner
         spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
+                (p0!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (p0!!.getChildAt(0) as TextView).textSize = 16f
             }
 
-            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?,
+                selectedItemView: View,
+                position: Int,
+                id: Long
+            ) {
                 role = parentView?.getItemAtPosition(position).toString()
                 Log.i("role", role)
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
         })
 
         // set event listener for industry spinner
         spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
+                (p0!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (p0!!.getChildAt(0) as TextView).textSize = 5f
             }
 
-            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?,
+                selectedItemView: View,
+                position: Int,
+                id: Long
+            ) {
                 industry = parentView?.getItemAtPosition(position).toString()
                 Log.i("industry", industry)
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
         })
 
@@ -121,7 +140,10 @@ class MyNamecardFragment : Fragment() {
 
                 } else if (options[item] == "Choose from Gallery") {
 
-                    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    val pickPhoto = Intent(
+                        Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    )
                     startActivityForResult(pickPhoto, 1)
 
                 } else if (options[item] == "Cancel") {
@@ -139,20 +161,25 @@ class MyNamecardFragment : Fragment() {
 
         if (activity != null){
 
-            if (ContextCompat.checkSelfPermission(activity,
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(
+                    activity,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED){
                 // Permission is not granted
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.CAMERA
+                    )){
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
                 } else {
                     ActivityCompat.requestPermissions(
-                            activity,
-                            arrayOf(
-                                    Manifest.permission.CAMERA
-                            ),
-                            MY_PERMISSIONS_REQUEST_CAMERA
+                        activity,
+                        arrayOf(
+                            Manifest.permission.CAMERA
+                        ),
+                        MY_PERMISSIONS_REQUEST_CAMERA
                     )
                 }
             }
@@ -164,8 +191,8 @@ class MyNamecardFragment : Fragment() {
     private fun isCameraPermissionGranted(): Boolean {
         return this.activity?.let {
             ActivityCompat.checkSelfPermission(
-                    it,
-                    Manifest.permission.CAMERA
+                it,
+                Manifest.permission.CAMERA
             )
         } == PackageManager.PERMISSION_GRANTED
 
@@ -173,8 +200,8 @@ class MyNamecardFragment : Fragment() {
 
     //for handling permissions
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>, grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_CAMERA -> {
@@ -204,9 +231,9 @@ class MyNamecardFragment : Fragment() {
 
             // Initialise role spinner
             ArrayAdapter.createFromResource(
-                    it,
-                    R.array.roles,
-                    android.R.layout.simple_spinner_item
+                it,
+                R.array.roles,
+                android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -216,9 +243,9 @@ class MyNamecardFragment : Fragment() {
 
             // Initialise role spinner
             ArrayAdapter.createFromResource(
-                    it,
-                    R.array.industries,
-                    android.R.layout.simple_spinner_item
+                it,
+                R.array.industries,
+                android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -263,7 +290,11 @@ class MyNamecardFragment : Fragment() {
 //                Log.d("updateProfile", "industry: $industry, role: $role")
 
 //                Update Role
-                val roleAdapter = ArrayAdapter.createFromResource(this.requireActivity(), R.array.roles, android.R.layout.simple_spinner_item)
+                val roleAdapter = ArrayAdapter.createFromResource(
+                    this.requireActivity(),
+                    R.array.roles,
+                    android.R.layout.simple_spinner_item
+                )
 
                 roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinnerRole.setAdapter(roleAdapter)
@@ -273,7 +304,11 @@ class MyNamecardFragment : Fragment() {
                 }
 
 //                Update industry
-                val industryAdapter = ArrayAdapter.createFromResource(this.requireActivity(), R.array.industries, android.R.layout.simple_spinner_item)
+                val industryAdapter = ArrayAdapter.createFromResource(
+                    this.requireActivity(),
+                    R.array.industries,
+                    android.R.layout.simple_spinner_item
+                )
 
                 industryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinnerIndustry.setAdapter(industryAdapter)
@@ -312,8 +347,8 @@ class MyNamecardFragment : Fragment() {
 //                    userImage.setBackgroundDrawable(bitmapDrawable)
                     Log.i("URI", selectedImage.toString())
                     Glide.with(this)
-                            .load(selectedImage)
-                            .into(fragmentMyNamecardBinding.namecardPhoto)
+                        .load(selectedImage)
+                        .into(fragmentMyNamecardBinding.namecardPhoto)
                 }
             }
             super.onActivityResult(requestCode, resultCode, data)

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -94,6 +95,8 @@ class CreateNamecard() : AppCompatActivity() {
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
         })
 
@@ -104,6 +107,8 @@ class CreateNamecard() : AppCompatActivity() {
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 industry = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
         })
 

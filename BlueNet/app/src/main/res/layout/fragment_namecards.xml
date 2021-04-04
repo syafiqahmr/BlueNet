@@ -5,37 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.namecards.NamecardsFragment"
+    android:background="#071A41"
     android:layout_margin="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#071A41"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:background="#071A41"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FFFFFF"
+            android:textSize="16sp"
             app:layout_constraintTop_toTopOf="parent">
 
             <Spinner
                 android:id="@+id/spinnerIndustry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/spinner_edittext"
+
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp"/>
 
             <Spinner
                 android:id="@+id/spinnerRole"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/spinner_edittext"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
         <ListView
+            android:id="@+id/lvNamecards"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lvNamecards"
             android:layout_marginTop="10dp">
 
         </ListView>

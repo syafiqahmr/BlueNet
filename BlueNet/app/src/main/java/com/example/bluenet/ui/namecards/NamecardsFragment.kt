@@ -1,5 +1,6 @@
 package com.example.bluenet.ui.namecards
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.ArraySet
@@ -11,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -99,11 +101,15 @@ class NamecardsFragment : Fragment() {
         spinnerRole.setOnItemSelectedListener(object : OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
                 applyFilter()
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
                 role = "All roles"
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
                 applyFilter()
             }
         })
@@ -112,11 +118,15 @@ class NamecardsFragment : Fragment() {
         spinnerIndustry.setOnItemSelectedListener(object : OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 industry = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
                 applyFilter()
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
                 role = "All industries"
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
                 applyFilter()
             }
         })

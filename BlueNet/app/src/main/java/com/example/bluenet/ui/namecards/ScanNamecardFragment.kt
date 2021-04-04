@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -92,10 +93,14 @@ class ScanNamecardFragment : Fragment() {
         // set event listener for industry spinner
         spinnerRole.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
+                (p0!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (p0!!.getChildAt(0) as TextView).textSize = 16f
             }
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
         })
 
