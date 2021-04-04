@@ -126,6 +126,7 @@ class NamecardsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun retrieveDataFromDB() {
         val user = FirebaseAuth.getInstance().currentUser!!
+        Log.i("user", user.uid)
         var arrNamecardId: ArraySet<String> = ArraySet()
 
 
@@ -136,7 +137,7 @@ class NamecardsFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (n in dataSnapshot.children) {
-                        val namecard = n.getValue(String::class.java)
+                        val namecard = n.key.toString()
                         if (namecard != null) {
                             arrNamecardId.add(namecard)
                         }
@@ -151,6 +152,8 @@ class NamecardsFragment : Fragment() {
         }
 
         listOfNamecard.addValueEventListener(postListenerListOfNamecard)
+
+        Log.i("namecards", arrNamecardId.toString())
 
 
         // retrieve namecard info
