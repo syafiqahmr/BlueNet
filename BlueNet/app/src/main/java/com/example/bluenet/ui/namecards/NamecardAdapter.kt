@@ -1,6 +1,8 @@
 package com.example.bluenet.ui.namecards
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
+import android.provider.MediaStore
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.bluenet.R
 
 //
@@ -84,6 +88,9 @@ class NamecardAdapter (var context: Context, var namecards: List<Namecard>) : Ba
         viewHolder.tvCompany.text = namecard.company
         viewHolder.tvName.text = namecard.name
 //        namecard.image?.let { viewHolder.image.setImageResource(it) }
+        Glide.with(view!!)
+            .load(namecard.image)
+            .into(viewHolder.image)
         viewHolder.tvIndustry.text = namecard.industry
         viewHolder.tvRole.text = namecard.role
         viewHolder.tvLinkedin.text = namecard.linkedin

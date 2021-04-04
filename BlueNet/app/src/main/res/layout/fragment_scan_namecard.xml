@@ -9,23 +9,18 @@
     android:background="#071A41">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="30dp">
 
         <ImageView
-            android:layout_height="100dp"
+            android:id="@+id/imageViewNamecardScan"
             android:layout_width="180dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:visibility="gone"
-            android:id="@+id/imageViewNamecardScan"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Scan Namecard"
-            android:id="@+id/buttonScan"/>
+            android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -153,21 +148,21 @@
                 app:layout_constraintTop_toTopOf="@+id/imageView5"
                 app:layout_constraintVertical_bias="0.267" />
 
+
             <Button
                 android:id="@+id/buttonSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Update Namecard"
+                android:visibility="invisible"
                 android:textColor="#071A41"
                 app:backgroundTint="#00BCD4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.688"
+                app:layout_constraintVertical_bias="0.715"
                 tools:ignore="MissingConstraints" />
-
 
             <ImageView
                 android:id="@+id/imageView6"
@@ -181,6 +176,18 @@
                 app:layout_constraintStart_toStartOf="@+id/imageView5"
                 app:layout_constraintTop_toTopOf="@+id/imageView5"
                 app:layout_constraintVertical_bias="0.844" />
+
+            <Button
+                android:id="@+id/buttonScan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Scan Namecard"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.154" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

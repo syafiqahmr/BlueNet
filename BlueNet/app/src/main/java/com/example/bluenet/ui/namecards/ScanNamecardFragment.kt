@@ -149,6 +149,7 @@ class ScanNamecardFragment : Fragment() {
                 }
             }
             Toast.makeText(this.activity, "Analyzed!", Toast.LENGTH_SHORT)
+            fragmentScanNamecardBinding.buttonSave.visibility = View.VISIBLE
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
