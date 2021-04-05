@@ -1,3 +1,8 @@
 package com.example.bluenet.ui.traffic
 
-data class Traffic(val name: String, val sum: Int) {}
+data class Traffic(val name: String, val traffic: String) {
+
+    constructor() : this("", ""){
+
+    }
+}

@@ -1,12 +1,15 @@
 package com.example.bluenet.ui.traffic
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bluenet.R
 import kotlinx.android.synthetic.main.traffic_item_list.view.*
+
 
 class TrafficAdapter(private val modelList: List<Traffic>, val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -43,10 +46,25 @@ class TrafficAdapter(private val modelList: List<Traffic>, val context: Context)
 
         fun bind(model: Traffic): Unit {
             itemView.txt.text = model.name
-            itemView.sub_txt.text = model.sum.toString()
 
+            itemView.sub_txt.text = model.traffic
+            var color = R.color.red
 
-            val id = context.resources.getIdentifier(model.name.toLowerCase(), "drawable", context.packageName)
+            if (model.traffic.contains("Very Crowded")){
+                color = R.color.red
+            }else if (model.traffic.contains("Crowded")){
+                color = R.color.yellow
+            }else if (model.traffic.contains("Not Crowded")){
+                color = R.color.green
+            }
+
+            itemView.statuscircle.setColorFilter(ContextCompat.getColor(context, color));
+
+            val id = context.resources.getIdentifier(
+                model.name.toLowerCase(),
+                "drawable",
+                context.packageName
+            )
             itemView.img.setBackgroundResource(id)
         }
 
