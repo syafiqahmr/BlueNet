@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.nfc.cardemulation.CardEmulation
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -46,6 +47,7 @@ class ScanNamecardFragment : Fragment() {
     private lateinit var role : String
     private var selectedImage: Uri? = null
     private lateinit var user: FirebaseUser
+    private lateinit var namecardId: String
 
 
     override fun onCreateView(
@@ -273,8 +275,8 @@ class ScanNamecardFragment : Fragment() {
         if (name != "" && company != ""){
             // save to db
             val namecard = Namecard(name, company, image, industry, role, linkedin)
-            // TODO: need to add the namecard list
-            saveToDb(namecard)
+            saveNamecardToDb(namecard)
+            saveToDbList()
 
             view.findNavController().navigate(R.id.navigation_namecards)
 
@@ -287,27 +289,33 @@ class ScanNamecardFragment : Fragment() {
         }
     }
 
-    private fun saveToDb(namecard: Namecard) {
+    private fun saveNamecardToDb(namecard: Namecard){
         val filename = UUID.randomUUID().toString()
-        var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
+        // TODO: the code below will cause it to crash
+//        var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
 
 //        imageRef.putFile(selectedImage!!)
-//                .addOnSuccessListener {
-//                    Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
+//            .addOnSuccessListener {
+//                Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
 //
-//                    imageRef.downloadUrl.addOnSuccessListener {
-//                        it.toString()
-//                        Log.d("RegisterActivity", "File location $it")
+//                imageRef.downloadUrl.addOnSuccessListener {
+//                    it.toString()
+//                    Log.d("RegisterActivity", "File location $it")
 //
-//                    }
 //                }
+//            }
 
         user = FirebaseAuth.getInstance().currentUser!!
         val ref = FirebaseDatabase.getInstance().getReference("namecards")
-        val namecardId = ref.push().key.toString()
+        namecardId = ref.push().key.toString()
 
         ref.child(namecardId).setValue(namecard).addOnCompleteListener {
             Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun saveToDbList(){
+        val ref = FirebaseDatabase.getInstance().getReference("listOfNamecards")
+        ref.child(user.uid).child(namecardId).setValue("")
     }
 }
