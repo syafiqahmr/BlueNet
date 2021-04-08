@@ -7,6 +7,13 @@
     <string name="title_traffic">Traffic</string>
 
     <string-array name="industries">
+        <item>Finance</item>
+        <item>Technology</item>
+        <item>Healthcare</item>
+        <item>Education</item>
+    </string-array>
+
+    <string-array name="industriesFilter">
         <item>All industries</item>
         <item>Finance</item>
         <item>Technology</item>
@@ -15,6 +22,13 @@
     </string-array>
 
     <string-array name="roles">
+        <item>Entrepreneur</item>
+        <item>Venture Capitalist</item>
+        <item>Researcher</item>
+    </string-array>
+
+
+    <string-array name="rolesFilter">
         <item>All roles</item>
         <item>Entrepreneur</item>
         <item>Venture Capitalist</item>

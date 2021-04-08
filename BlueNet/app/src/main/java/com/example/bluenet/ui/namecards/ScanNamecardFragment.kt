@@ -2,6 +2,7 @@ package com.example.bluenet.ui.namecards
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -36,6 +37,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import kotlinx.android.synthetic.main.fragment_namecards.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -45,6 +47,7 @@ class ScanNamecardFragment : Fragment() {
     private val MY_PERMISSIONS_REQUEST_CAMERA: Int = 101
     private var textExtracted = ArrayList<String>()
     private lateinit var role : String
+    private lateinit var industry : String
     private var selectedImage: Uri? = null
     private lateinit var user: FirebaseUser
     private lateinit var namecardId: String
@@ -74,7 +77,6 @@ class ScanNamecardFragment : Fragment() {
     }
 
     private fun initialiseSpinner() {
-        // TODO: Make Industry a spinner also like filter
 
         val spinnerRole = fragmentScanNamecardBinding.spinnerRole
 
@@ -101,6 +103,36 @@ class ScanNamecardFragment : Fragment() {
 
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 role = parentView?.getItemAtPosition(position).toString()
+                (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (parentView!!.getChildAt(0) as TextView).textSize = 16f
+            }
+        })
+
+        val spinnerIndustry = fragmentScanNamecardBinding.industry
+
+        // Initialise role spinner
+        this.activity?.let {
+            ArrayAdapter.createFromResource(
+                it,
+                R.array.industries,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                spinnerIndustry?.adapter = adapter
+            }
+        }
+
+        // set event listener for industry spinner
+        spinnerIndustry.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                (p0!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                (p0!!.getChildAt(0) as TextView).textSize = 16f
+            }
+
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                industry = parentView?.getItemAtPosition(position).toString()
                 (parentView!!.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                 (parentView!!.getChildAt(0) as TextView).textSize = 16f
             }
@@ -253,17 +285,47 @@ class ScanNamecardFragment : Fragment() {
     }
 
     private fun extractInfo(){
-        var extraction = NamecardDetailsExtraction(textExtracted)
-        extraction.extractName()?.let { Log.i("name", it) }
-        extraction.extractLinkedin()?.let { Log.i("linkedin", it) }
+        var extraction = this.activity?.let { NamecardDetailsExtraction(textExtracted, it) }
+        if (extraction != null) {
+            fragmentScanNamecardBinding.name.setText(extraction.extractName())
+            fragmentScanNamecardBinding.linkedin.setText(extraction.extractLinkedin())
+            val role = extraction.extractRole()
+            val industry = extraction.extractIndustry()
 
-        fragmentScanNamecardBinding.name.setText(extraction.extractName())
-        fragmentScanNamecardBinding.linkedin.setText(extraction.extractLinkedin())
+            // update role
+            val spinnerRole = fragmentScanNamecardBinding.spinnerRole
+            val roleAdapter = ArrayAdapter.createFromResource(
+                this.requireActivity(),
+                R.array.roles,
+                android.R.layout.simple_spinner_item
+            )
+            roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerRole.setAdapter(roleAdapter)
+            if (role != null) {
+                val spinnerRolePosition = roleAdapter.getPosition(role)
+                spinnerRole.setSelection(spinnerRolePosition)
+            }
+
+            // update industry
+            val spinnerIndustry = fragmentScanNamecardBinding.industry
+            val industryAdapter = ArrayAdapter.createFromResource(
+                this.requireActivity(),
+                R.array.industries,
+                android.R.layout.simple_spinner_item
+            )
+            industryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerIndustry.setAdapter(industryAdapter)
+            if (industry != null) {
+                val spinnerRolePosition = industryAdapter.getPosition(industry)
+                spinnerIndustry.setSelection(spinnerRolePosition)
+            }
+        }
+
+
     }
 
     private fun createOnClick(view: View){
         val name = fragmentScanNamecardBinding.name.text.toString().trim()
-        val industry = fragmentScanNamecardBinding.industry.text.toString().trim()
         val company = fragmentScanNamecardBinding.company.text.toString().trim()
         var image = ""
         val linkedin = fragmentScanNamecardBinding.linkedin.text.toString().trim()
