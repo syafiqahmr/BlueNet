@@ -74,6 +74,8 @@ class ScanNamecardFragment : Fragment() {
         }
 
         initialiseSpinner()
+
+        selectedImage = Uri.parse("android.resource://" + this.requireActivity().getPackageName() + "/" + R.drawable.profile_avatar)
     }
 
     private fun initialiseSpinner() {
@@ -353,18 +355,21 @@ class ScanNamecardFragment : Fragment() {
     private fun saveNamecardToDb(namecard: Namecard){
         val filename = UUID.randomUUID().toString()
         // TODO: the code below will cause it to crash
-//        var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
 
-//        imageRef.putFile(selectedImage!!)
-//            .addOnSuccessListener {
-//                Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
-//
-//                imageRef.downloadUrl.addOnSuccessListener {
-//                    it.toString()
-//                    Log.d("RegisterActivity", "File location $it")
-//
-//                }
-//            }
+        if (selectedImage != null){
+            var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
+
+            imageRef.putFile(selectedImage!!)
+                .addOnSuccessListener {
+                    Log.d("RegisterActivity", "Image uploaded ${it.metadata?.path}")
+
+                    imageRef.downloadUrl.addOnSuccessListener {
+                        it.toString()
+                        Log.d("RegisterActivity", "File location $it")
+
+                    }
+                }
+        }
 
         user = FirebaseAuth.getInstance().currentUser!!
         val ref = FirebaseDatabase.getInstance().getReference("namecards")
