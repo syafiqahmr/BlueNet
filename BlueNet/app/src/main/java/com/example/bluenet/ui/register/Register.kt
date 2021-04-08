@@ -67,7 +67,7 @@ class Register : AppCompatActivity() {
             hasError = true
         }
         // Check if Password & Confirm Password is the same
-        else if (inputPassword != inputConfirmPassword) {
+        else if (inputPassword.toString().compareTo(inputConfirmPassword.toString()) != 0) {
             findViewById<EditText>(R.id.confirmPassword).error = "Confirm Password is not the same!"
             findViewById<EditText>(R.id.confirmPassword).requestFocus()
             hasError = true
@@ -124,6 +124,8 @@ class Register : AppCompatActivity() {
                         Log.w("TAG", "createUserWithEmail:failure", task.exception)
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
+                        findViewById<EditText>(R.id.email).error = "Email has been used!"
+                        findViewById<EditText>(R.id.email).requestFocus()
                     }
                 }
 
