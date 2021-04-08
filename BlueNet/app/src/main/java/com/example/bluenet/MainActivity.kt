@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
                 setOf(
-                        R.id.navigation_traffic, R.id.navigation_dashboard, R.id.navigation_notifications
+                        R.id.navigation_traffic, R.id.navigation_namecards, R.id.navigation_my_namecard, R.id.navigation_scan_namecard
                 )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

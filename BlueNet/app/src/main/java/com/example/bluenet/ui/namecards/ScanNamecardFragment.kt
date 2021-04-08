@@ -187,7 +187,7 @@ class ScanNamecardFragment : Fragment() {
                     }
                 }
             }
-            Toast.makeText(this.activity, "Analyzed!", Toast.LENGTH_SHORT)
+            Toast.makeText(this.activity, "Analyzed!", Toast.LENGTH_SHORT).show()
             fragmentScanNamecardBinding.buttonSave.visibility = View.VISIBLE
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -195,18 +195,15 @@ class ScanNamecardFragment : Fragment() {
 
     private fun analyze(image: InputImage){
         val recognizer = TextRecognition.getClient()
-        Log.i("test", "hi")
         val result = recognizer.process(image)
                 .addOnSuccessListener { visionText ->
                     extractText(visionText)
                     extractInfo()
-
-                    Toast.makeText(this.activity, "Success", Toast.LENGTH_SHORT)
                 }
                 .addOnFailureListener { e ->
                     // Task failed with an exception
                     // ...
-                    Toast.makeText(this.activity, "Error in analyzing", Toast.LENGTH_SHORT)
+                    Toast.makeText(this.activity, "Error in analyzing", Toast.LENGTH_SHORT).show()
                 }
 
     }
@@ -320,6 +317,8 @@ class ScanNamecardFragment : Fragment() {
                 spinnerIndustry.setSelection(spinnerRolePosition)
             }
         }
+
+        Toast.makeText(this.activity, "Details extracted!", Toast.LENGTH_SHORT).show()
 
 
     }

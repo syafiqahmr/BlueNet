@@ -75,7 +75,7 @@ class NamecardsFragment : Fragment() {
             // Initialise industry spinner
             ArrayAdapter.createFromResource(
                     it,
-                    R.array.industries,
+                    R.array.industriesFilter,
                     android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
@@ -87,7 +87,7 @@ class NamecardsFragment : Fragment() {
             // Initialise role spinner
             ArrayAdapter.createFromResource(
                     it,
-                    R.array.roles,
+                    R.array.rolesFilter,
                     android.R.layout.simple_spinner_item
             ).also { adapter ->
                 // Specify the layout to use when the list of choices appears
