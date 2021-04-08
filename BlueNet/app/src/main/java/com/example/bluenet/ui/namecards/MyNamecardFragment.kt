@@ -31,6 +31,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_namecards.*
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -60,6 +61,10 @@ class MyNamecardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fragmentMyNamecardBinding = FragmentMyNamecardBinding.bind(view)
         userImage = fragmentMyNamecardBinding.namecardPhoto
+        selectedImage = Uri.parse(
+            "android.resource://" + this.requireActivity()
+                .getPackageName() + "/" + R.drawable.profile_avatar
+        )
 
 
     }
@@ -122,6 +127,7 @@ class MyNamecardFragment : Fragment() {
         // Retrieve namecard data and display it
         getData()
 
+        // set Namecard Photo event listener
         userImage.setOnClickListener(View.OnClickListener() {
 
             Log.i("updateProfile", "Image button clicked")
@@ -334,11 +340,23 @@ class MyNamecardFragment : Fragment() {
         if (resultCode != AppCompatActivity.RESULT_CANCELED) {
             when (requestCode) {
                 0 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
-                    val selectedImage = data.extras!!["data"] as Bitmap?
-                    userImage.setImageBitmap(selectedImage)
-//                    Glide.with(this)
-//                            .load(selectedImage.toUri)
-//                            .into(fragmentMyNamecardBinding.namecardPhoto)
+                    val selected = data.extras!!["data"] as Bitmap?
+
+                    val bytes = ByteArrayOutputStream()
+                    if (selected != null) {
+                        selected.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                    }
+                    val path: String = MediaStore.Images.Media.insertImage(
+                        this.requireActivity().getContentResolver(),
+                        selected,
+                        "Title",
+                        null
+                    )
+                    selectedImage = Uri.parse(path)
+                    Glide.with(this)
+                        .load(selectedImage)
+                        .into(fragmentMyNamecardBinding.namecardPhoto)
+//                    userImage.setImageBitmap(selectedImage)
                 }
                 1 -> if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
                     selectedImage = data.data

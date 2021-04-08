@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.bluenet.MainActivity
 import com.example.bluenet.R
 import com.google.firebase.auth.FirebaseAuth
@@ -30,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_my_namecard.*
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -47,9 +49,10 @@ class CreateNamecard() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_namecard)
         userImage = findViewById(R.id.namecardPhoto)
-
-//        //initialise default image
-//        userImage.setImageResource(R.drawable.profile_avatar)
+        selectedImage = Uri.parse("android.resource://" + this.getPackageName() + "/" + R.drawable.profile_avatar)
+        Glide.with(this)
+            .load(selectedImage)
+            .into(userImage)
 
         initialiseSpinner()
     }
@@ -239,15 +242,32 @@ class CreateNamecard() : AppCompatActivity() {
         Log.d("RegisterActivity","Image data received")
         if (resultCode != RESULT_CANCELED) {
             when (requestCode) {
-                2 -> if (resultCode == RESULT_OK && data != null) {
-                    val selectedImage = data.extras!!["data"] as Bitmap?
-                    userImage.setImageBitmap(selectedImage)
+                0 -> if (resultCode == RESULT_OK && data != null) {
+                    val selected = data.extras!!["data"] as Bitmap?
+
+                    val bytes = ByteArrayOutputStream()
+                    if (selected != null) {
+                        selected.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                    }
+                    val path: String = MediaStore.Images.Media.insertImage(
+                        contentResolver,
+                        selected,
+                        "Title",
+                        null
+                    )
+                    selectedImage = Uri.parse(path)
+                    Glide.with(this)
+                        .load(selectedImage)
+                        .into(userImage)
                 }
                 1 -> if (resultCode == RESULT_OK && data != null) {
                     selectedImage = data.data
-                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
-                    val bitmapDrawable = BitmapDrawable(bitmap)
-                    userImage.setBackgroundDrawable(bitmapDrawable)
+//                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
+//                    val bitmapDrawable = BitmapDrawable(bitmap)
+//                    userImage.setBackgroundDrawable(bitmapDrawable)
+                    Glide.with(this)
+                        .load(selectedImage)
+                        .into(userImage)
                 }
             }
         }

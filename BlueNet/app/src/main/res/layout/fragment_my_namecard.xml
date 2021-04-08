@@ -29,13 +29,13 @@
             android:id="@+id/namecardPhoto"
             android:layout_width="106dp"
             android:layout_height="122dp"
+            android:src="@drawable/profile_avatar"
             app:layout_constraintBottom_toBottomOf="@+id/imageView5"
             app:layout_constraintEnd_toEndOf="@+id/imageView5"
-            app:layout_constraintHorizontal_bias="0.071"
+            app:layout_constraintHorizontal_bias="0.098"
             app:layout_constraintStart_toStartOf="@+id/imageView5"
             app:layout_constraintTop_toTopOf="@+id/imageView5"
-            app:layout_constraintVertical_bias="0.093"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:layout_constraintVertical_bias="0.093" />
 
         <EditText
             android:id="@+id/name"
