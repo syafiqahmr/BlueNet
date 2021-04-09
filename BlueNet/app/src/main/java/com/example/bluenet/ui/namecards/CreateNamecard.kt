@@ -129,8 +129,7 @@ class CreateNamecard() : AppCompatActivity() {
 
         if (name != "" && company != "" && role != "All roles" && industry != "All industries"){
             // save to db
-            val namecard = Namecard(name, company, image, industry, role, linkedin)
-            saveToDb(namecard)
+            saveToDb(name, company, industry, role, linkedin)
 
             val it = Intent(this, MainActivity::class.java)
             startActivity(it)
@@ -275,7 +274,7 @@ class CreateNamecard() : AppCompatActivity() {
     }
 
 
-    private fun saveToDb(namecard: Namecard){
+    private fun saveToDb(name:String, company:String, industry:String, role:String, linkedin:String){
         val filename = UUID.randomUUID().toString()
         var imageRef = FirebaseStorage.getInstance().getReference("/images/user/$filename")
 
@@ -286,20 +285,22 @@ class CreateNamecard() : AppCompatActivity() {
                 imageRef.downloadUrl.addOnSuccessListener {
                     it.toString()
                     Log.d("RegisterActivity", "File location $it")
+                    val namecard = Namecard(name, company, it.toString(), industry, role, linkedin)
 
+                    user = FirebaseAuth.getInstance().currentUser!!
+                    val ref = FirebaseDatabase.getInstance().getReference("namecards")
+
+
+                    // namecard id == uid
+                    if (user != null) {
+                        ref.child(user.uid.substring(0, 16)).setValue(namecard).addOnCompleteListener {
+                            Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
 
-        user = FirebaseAuth.getInstance().currentUser!!
-        val ref = FirebaseDatabase.getInstance().getReference("namecards")
 
-
-        // namecard id == uid
-        if (user != null) {
-            ref.child(user.uid.substring(0, 16)).setValue(namecard).addOnCompleteListener {
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
 
