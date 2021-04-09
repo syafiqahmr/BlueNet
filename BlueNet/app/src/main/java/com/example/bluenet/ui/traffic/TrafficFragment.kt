@@ -29,7 +29,7 @@ class TrafficFragment : Fragment() {
     }
 
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
-        Log.d("traffic", "View Created")
+        Log.d("Traffic", "View Created")
         super.onViewCreated(itemView, savedInstanceState)
         getData()
 
@@ -37,11 +37,12 @@ class TrafficFragment : Fragment() {
 
 
     private fun trafficCount(boothTraffic: HashMap<String, Int>){
+
+        Log.d("Traffic", "-----------TrafficCount---------")
+
         var zoneTraffic = HashMap<String, Int>();
-
-        Log.d("Traffic", "Read from asset")
         val modeList = mutableListOf<Traffic>()
-
+        var trafficTotal = 0
         for((k, v) in boothTraffic) {
 
             var zone = k[0].toString();
@@ -53,10 +54,8 @@ class TrafficFragment : Fragment() {
                 zoneTraffic[zone] = v;
             }
         }
-
-        var trafficSum = 0
         for((k, v) in zoneTraffic) {
-            trafficSum += v
+            trafficTotal += v
         }
 
         for((k, v) in zoneTraffic) {
@@ -71,12 +70,19 @@ class TrafficFragment : Fragment() {
                 name = "Craft"
             }
 
-            val trafficPercent = v / trafficSum
-            val trafficPercentDisplay = trafficPercent * 100
+            Log.d("Traffic","$v")
+
+            val trafficPercent = v.toFloat() / trafficTotal.toFloat()
+            Log.d("Traffic","$trafficTotal")
+
+            val trafficPercentDisplay = "%.2f".format((trafficPercent * 100))
 
             var traffic = "Not Crowded ($trafficPercentDisplay%)"
 
-            if (trafficPercent > 0.75){
+            if(trafficTotal < 100){
+                traffic = "Not Crowded"
+            }
+            else if (trafficPercent > 0.75){
                 traffic = "Very Crowded ($trafficPercentDisplay%)"
             } else if(trafficPercent >0.5) {
                 traffic = "Crowded ($trafficPercentDisplay%)"
@@ -109,13 +115,16 @@ class TrafficFragment : Fragment() {
 
 
     private fun getData(){
-        var boothTraffic = HashMap<String, Int>()
-        Log.d("traffic", " getData")
+
+        Log.d("Traffic","------Get Data------")
         val ref = FirebaseDatabase.getInstance().getReference("traffic")
 
         val trafficListener = object : ValueEventListener {
+            var boothTraffic = HashMap<String, Int>()
+
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+
                     for (j in dataSnapshot.children) {
                         val boothCodeRef = FirebaseDatabase.getInstance().getReference("users").child(j.getKey().toString())
 
@@ -129,10 +138,11 @@ class TrafficFragment : Fragment() {
                                                 trafficCount(boothTraffic)
                                             }
                                         }
-
                                     }
                                 }
                             }
+
+
 
                             override fun onCancelled(databaseError: DatabaseError) {
                                 // Getting Post failed, log a message
@@ -152,10 +162,8 @@ class TrafficFragment : Fragment() {
             }
         }
 
+
         ref.addValueEventListener(trafficListener)
     }
-
-
-
 
 }
