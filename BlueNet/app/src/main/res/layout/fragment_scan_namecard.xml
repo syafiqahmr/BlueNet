@@ -155,14 +155,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save Namecard"
-                android:visibility="invisible"
                 android:textColor="#071A41"
+                android:visibility="invisible"
                 app:backgroundTint="#00BCD4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.715"
+                app:layout_constraintVertical_bias="0.745"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
@@ -190,7 +190,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView5"
-                app:layout_constraintVertical_bias="0.154" />
+                app:layout_constraintVertical_bias="0.205" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
