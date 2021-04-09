@@ -31,7 +31,10 @@ class TrafficFragment : Fragment() {
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         Log.d("Traffic", "View Created")
         super.onViewCreated(itemView, savedInstanceState)
+        rcv.layoutManager = LinearLayoutManager(this.activity, RecyclerView.VERTICAL, false)
         getData()
+
+
 
     }
 
@@ -91,7 +94,8 @@ class TrafficFragment : Fragment() {
 
             val model = Traffic(
                 name,
-                traffic
+                traffic,
+                v
             )
             modeList.add(model)
         }
@@ -100,12 +104,11 @@ class TrafficFragment : Fragment() {
 
         val adapter = activity?.let { TrafficAdapter(modeList, it) }
 
-        rcv.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        rcv.adapter = adapter
+        rcv?.adapter = adapter
 
         adapter?.setOnClickListener(object : TrafficAdapter.ClickListener {
             override fun onClick(pos: Int, aView: View) {
-                Toast.makeText(activity, modeList.get(pos).name, Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "${modeList.get(pos).people} people in this zone", Toast.LENGTH_LONG).show()
                 Log.d("traffic", "clicked")
             }
         })
