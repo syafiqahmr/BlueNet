@@ -36,57 +36,56 @@ class TrafficFragment : Fragment() {
     }
 
 
-    private fun trafficCount(boothTraffic: HashMap<String, Int>){
+    private fun trafficCount(boothTraffic: HashMap<String, Int>) {
 
         Log.d("Traffic", "-----------TrafficCount---------")
 
-        var zoneTraffic = HashMap<String, Int>();
+        var zoneTraffic = HashMap<String, Int>()
         val modeList = mutableListOf<Traffic>()
         var trafficTotal = 0
-        for((k, v) in boothTraffic) {
+        for ((k, v) in boothTraffic) {
 
-            var zone = k[0].toString();
-            if (zoneTraffic.containsKey(zone)){
-                var sum = zoneTraffic[zone]!! + v;
+            var zone = k[0].toString()
+            if (zoneTraffic.containsKey(zone)) {
+                var sum = zoneTraffic[zone]!! + v
 
-                zoneTraffic[zone] = sum;
-            }else{
-                zoneTraffic[zone] = v;
+                zoneTraffic[zone] = sum
+            } else {
+                zoneTraffic[zone] = v
             }
         }
-        for((k, v) in zoneTraffic) {
+        for ((k, v) in zoneTraffic) {
             trafficTotal += v
         }
 
-        for((k, v) in zoneTraffic) {
+        for ((k, v) in zoneTraffic) {
             Log.i("Zone", "$k -> $v")
             var name = "Others"
 
-            if(k == "T"){
+            if (k == "T") {
                 name = "Technology"
-            }else if (k == "A"){
+            } else if (k == "A") {
                 name = "Art"
-            }else if (k == "C"){
+            } else if (k == "C") {
                 name = "Craft"
             }
 
-//            Log.d("Traffic","$v")
+            Log.d("Traffic", "$v")
 
             val trafficPercent = v.toFloat() / trafficTotal.toFloat()
-//            Log.d("Traffic","$trafficTotal")
+            Log.d("Traffic", "$trafficTotal")
 
             val trafficPercentDisplay = "%.2f".format((trafficPercent * 100))
 
             var traffic = "Not Crowded ($trafficPercentDisplay%)"
 
-            if(trafficTotal < 100){
+            if (trafficTotal < 50) {
                 traffic = "Not Crowded"
-            }
-            else if (trafficPercent > 0.75){
+            } else if (trafficPercent >= 0.6) {
                 traffic = "Very Crowded ($trafficPercentDisplay%)"
-            } else if(trafficPercent >0.5) {
+            } else if (trafficPercent >= 0.3) {
                 traffic = "Crowded ($trafficPercentDisplay%)"
-            }else if (trafficPercent > 0.25){
+            } else if (trafficPercent >= 0.1) {
                 traffic = "Less Crowded ($trafficPercentDisplay%)"
             }
 
@@ -97,26 +96,25 @@ class TrafficFragment : Fragment() {
             modeList.add(model)
         }
 
-//        Log.d("Traffic",modeList.toString())
+        Log.d("Traffic", modeList.toString())
 
         val adapter = activity?.let { TrafficAdapter(modeList, it) }
 
         rcv.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        rcv.adapter = adapter;
+        rcv.adapter = adapter
 
         adapter?.setOnClickListener(object : TrafficAdapter.ClickListener {
             override fun onClick(pos: Int, aView: View) {
                 Toast.makeText(activity, modeList.get(pos).name, Toast.LENGTH_LONG).show()
-                Log.d("traffic","clicked")
+                Log.d("traffic", "clicked")
             }
         })
     }
 
 
+    private fun getData() {
 
-    private fun getData(){
-
-        Log.d("Traffic","------Get Data------")
+        Log.d("Traffic", "------Get Data------")
         val ref = FirebaseDatabase.getInstance().getReference("traffic")
 
         val trafficListener = object : ValueEventListener {
@@ -126,22 +124,25 @@ class TrafficFragment : Fragment() {
                 if (dataSnapshot.exists()) {
 
                     for (j in dataSnapshot.children) {
-                        val boothCodeRef = FirebaseDatabase.getInstance().getReference("users").child(j.getKey().toString())
+                        val boothCodeRef = FirebaseDatabase.getInstance().getReference("users")
+                            .child(j.key.toString())
 
                         val userListener = object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     for (n in dataSnapshot.children) {
                                         if (dataSnapshot.exists()) {
-                                            if (n.getKey().toString() == "boothCode"){
-                                                boothTraffic.put(n.getValue().toString(),j.getValue().toString().toInt())
+                                            if (n.key.toString() == "boothCode") {
+                                                boothTraffic.put(
+                                                    n.value.toString(),
+                                                    j.value.toString().toInt()
+                                                )
                                                 trafficCount(boothTraffic)
                                             }
                                         }
                                     }
                                 }
                             }
-
 
 
                             override fun onCancelled(databaseError: DatabaseError) {

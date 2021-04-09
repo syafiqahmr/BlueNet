@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="360dp"
-            android:layout_height="425dp"
+            android:layout_width="368dp"
+            android:layout_height="300dp"
             android:layout_marginTop="4dp"
             android:src="@drawable/floorplan"
             app:layout_constraintEnd_toEndOf="parent"
@@ -23,8 +23,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv"
-            android:layout_width="377dp"
-            android:layout_height="280dp"
+            android:layout_width="386dp"
+            android:layout_height="414dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
