@@ -135,6 +135,7 @@
             android:id="@+id/buttonSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
             android:text="Update Namecard"
             android:textColor="#071A41"
             app:backgroundTint="#00BCD4"
@@ -142,7 +143,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView5"
-            app:layout_constraintVertical_bias="0.371"
+            app:layout_constraintVertical_bias="0.275"
             tools:ignore="MissingConstraints" />
 
         <ImageView
