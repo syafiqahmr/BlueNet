@@ -63,17 +63,21 @@ class TrafficAdapter(private val modelList: List<Traffic>, val context: Context)
                 color = R.color.red
             }
 
-            Log.d("Traffic Color", "${color}")
+//            Log.d("Traffic Color", "${color}")
 
 
 
             itemView.statuscircle.setColorFilter(ContextCompat.getColor(context, color));
+
+            Log.d("Traffic Image", model.name.toLowerCase())
 
             val id = context.resources.getIdentifier(
                 model.name.toLowerCase(),
                 "drawable",
                 context.packageName
             )
+
+            Log.d("Traffic Image", id.toString())
             itemView.img.setBackgroundResource(id)
         }
 
