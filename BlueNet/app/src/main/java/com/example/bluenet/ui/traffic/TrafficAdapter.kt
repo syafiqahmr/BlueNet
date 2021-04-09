@@ -2,6 +2,7 @@ package com.example.bluenet.ui.traffic
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,13 +51,21 @@ class TrafficAdapter(private val modelList: List<Traffic>, val context: Context)
             itemView.sub_txt.text = model.traffic
             var color = R.color.red
 
+            Log.d("Traffic", "${model.traffic}")
             if (model.traffic.contains("Very Crowded")){
                 color = R.color.red
-            }else if (model.traffic.contains("Crowded")){
-                color = R.color.yellow
             }else if (model.traffic.contains("Not Crowded")){
                 color = R.color.green
+            }else if (model.traffic.contains("Less Crowded")) {
+                color = R.color.yellow
             }
+                else if (model.traffic.contains("Crowded")){
+                color = R.color.red
+            }
+
+            Log.d("Traffic Color", "${color}")
+
+
 
             itemView.statuscircle.setColorFilter(ContextCompat.getColor(context, color));
 
