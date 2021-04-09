@@ -70,10 +70,10 @@ class TrafficFragment : Fragment() {
                 name = "Craft"
             }
 
-            Log.d("Traffic","$v")
+//            Log.d("Traffic","$v")
 
             val trafficPercent = v.toFloat() / trafficTotal.toFloat()
-            Log.d("Traffic","$trafficTotal")
+//            Log.d("Traffic","$trafficTotal")
 
             val trafficPercentDisplay = "%.2f".format((trafficPercent * 100))
 
@@ -97,7 +97,7 @@ class TrafficFragment : Fragment() {
             modeList.add(model)
         }
 
-        Log.d("Traffic",modeList.toString())
+//        Log.d("Traffic",modeList.toString())
 
         val adapter = activity?.let { TrafficAdapter(modeList, it) }
 
