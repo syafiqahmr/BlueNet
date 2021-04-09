@@ -16,11 +16,12 @@
     android:background="#0a245a">
 
 
-    <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0a245a"
         android:orientation="vertical"
-        android:background="#0a245a">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/img"
@@ -31,16 +32,16 @@
 
         <TextView
             android:id="@+id/txt"
-            android:textSize="22sp"
-            android:text="Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
             android:layout_toEndOf="@+id/img"
             android:layout_toRightOf="@+id/img"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp" />
+            android:text="Title"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/sub_txt"
