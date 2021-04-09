@@ -9,14 +9,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardUseCompatPadding="true"
-
+    android:padding="10dp"
     card_view:contentPadding="10dp"
-    card_view:cardBackgroundColor="#0a245a"
-
-    android:background="#0a245a">
+    card_view:cardBackgroundColor="#071A41">
 
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#0a245a"
