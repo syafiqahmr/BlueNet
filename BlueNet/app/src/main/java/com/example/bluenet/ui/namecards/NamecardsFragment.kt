@@ -136,12 +136,12 @@ class NamecardsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun retrieveDataFromDB() {
         val user = FirebaseAuth.getInstance().currentUser!!
-        Log.i("user", user.uid)
+        Log.i("user", user.uid.substring(0, 16))
         var arrNamecardId: ArraySet<String> = ArraySet()
 
 
         // retrieve list of namecards saved by the users from the db
-        val listOfNamecard = FirebaseDatabase.getInstance().getReference("listOfNamecards").child(user.uid)
+        val listOfNamecard = FirebaseDatabase.getInstance().getReference("listOfNamecards").child(user.uid.substring(0, 16))
 
         val postListenerListOfNamecard = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

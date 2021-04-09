@@ -296,7 +296,7 @@ class CreateNamecard() : AppCompatActivity() {
 
         // namecard id == uid
         if (user != null) {
-            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
+            ref.child(user.uid.substring(0, 16)).setValue(namecard).addOnCompleteListener {
                 Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
             }
         }

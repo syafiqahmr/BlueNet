@@ -382,6 +382,6 @@ class ScanNamecardFragment : Fragment() {
 
     private fun saveToDbList(){
         val ref = FirebaseDatabase.getInstance().getReference("listOfNamecards")
-        ref.child(user.uid).child(namecardId).setValue("")
+        ref.child(user.uid.substring(0, 16)).child(namecardId).setValue("")
     }
 }

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
     private var beaconManager: BeaconManager? = null
     private var backgroundPowerSaver: BackgroundPowerSaver? = null
     private var crowd = -1
-    private val user = FirebaseAuth.getInstance().currentUser!!.uid
+    private val user = FirebaseAuth.getInstance().currentUser!!.uid.substring(0, 16)
     private val ref = Firebase.database.reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,17 +41,21 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED
+            ) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("This app needs background location access")
                         builder.setMessage("Please grant location access so this app can detect beacons in the background.")
                         builder.setPositiveButton(android.R.string.ok, null)
                         builder.setOnDismissListener {
-                            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                                    PERMISSION_REQUEST_BACKGROUND_LOCATION)
+                            requestPermissions(
+                                arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                                PERMISSION_REQUEST_BACKGROUND_LOCATION
+                            )
                         }
                         builder.show()
                     } else {
@@ -65,9 +69,13 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
                 }
             } else {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                            PERMISSION_REQUEST_FINE_LOCATION)
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ),
+                        PERMISSION_REQUEST_FINE_LOCATION
+                    )
                 } else {
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle("Functionality limited")
@@ -84,15 +92,15 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         beaconManager!!.bind(this)
 
         val beacon = Beacon.Builder()
-                .setId1(asciiToHex(user))
-                .setId2("1")
-                .setId3("2")
-                .setManufacturer(0x0118)
-                .setTxPower(-59)
-                .setDataFields(listOf(1.toLong()))
-                .build()
+            .setId1(asciiToHex(user))
+            .setId2("1")
+            .setId3("2")
+            .setManufacturer(0x0118)
+            .setTxPower(-59)
+            .setDataFields(listOf(1.toLong()))
+            .build()
         val beaconParser = BeaconParser()
-                .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
+            .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25")
         val beaconTransmitter = BeaconTransmitter(applicationContext, beaconParser)
         beaconTransmitter.startAdvertising(beacon)
 
@@ -110,9 +118,12 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                        R.id.navigation_traffic, R.id.navigation_namecards, R.id.navigation_my_namecard, R.id.navigation_scan_namecard
-                )
+            setOf(
+                R.id.navigation_traffic,
+                R.id.navigation_namecards,
+                R.id.navigation_my_namecard,
+                R.id.navigation_scan_namecard
+            )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -138,12 +149,12 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
         })
         try {
             beaconManager!!.startRangingBeaconsInRegion(
-                    Region(
-                            "myRangingUniqueId",
-                            null,
-                            null,
-                            null
-                    )
+                Region(
+                    "myRangingUniqueId",
+                    null,
+                    null,
+                    null
+                )
             )
         } catch (e: RemoteException) {
         }
@@ -160,10 +171,11 @@ class MainActivity : AppCompatActivity(), BeaconConsumer {
     }
 
     private fun hexToASCII(hexValue: String): String? {
+        var newHexValue = hexValue.replace("-", "")
         val output = StringBuilder("")
         var i = 0
-        while (i < hexValue.length) {
-            val str = hexValue.substring(i, i + 2)
+        while (i < newHexValue.length) {
+            val str = newHexValue.substring(i, i + 2)
             output.append(str.toInt(16).toChar())
             i += 2
         }

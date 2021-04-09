@@ -112,7 +112,7 @@ class Register : AppCompatActivity() {
                         // Save more details into "users" db
                         val user = User(type, code)
                         val ref = FirebaseDatabase.getInstance().getReference("users")
-                        ref.child(firebaseUser!!.uid).setValue(user).addOnCompleteListener {
+                        ref.child(firebaseUser!!.uid.substring(0, 16)).setValue(user).addOnCompleteListener {
                             Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()
                         }
                         // Go to CreateNamecard page

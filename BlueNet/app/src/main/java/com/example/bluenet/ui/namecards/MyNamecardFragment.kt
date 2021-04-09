@@ -267,7 +267,7 @@ class MyNamecardFragment : Fragment() {
         user = FirebaseAuth.getInstance().currentUser!!
         val ref = Firebase.database.reference
 
-        ref.child("namecards").child(user.uid).get().addOnSuccessListener {
+        ref.child("namecards").child(user.uid.substring(0, 16)).get().addOnSuccessListener {
 
             val namecard = it.getValue(Namecard::class.java)
             
@@ -415,7 +415,7 @@ class MyNamecardFragment : Fragment() {
             val ref = FirebaseDatabase.getInstance().getReference("namecards")
             val namecard = Namecard(name, company, image, industry, role, linkedin)
 
-            ref.child(user.uid).setValue(namecard).addOnCompleteListener {
+            ref.child(user.uid.substring(0, 16)).setValue(namecard).addOnCompleteListener {
                 Toast.makeText(this.activity, "Saved!", Toast.LENGTH_SHORT).show()
             }
         } else if (name == ""){
