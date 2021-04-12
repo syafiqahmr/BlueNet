@@ -286,7 +286,7 @@ class MyNamecardFragment : Fragment() {
 //                }
 
                 Glide.with(this)
-                        .load(namecard.image)
+                        .load(namecard.image.toUri())
                         .into(fragmentMyNamecardBinding.namecardPhoto)
 //                userImage.setImageURI(namecard.image.toUri())
 
