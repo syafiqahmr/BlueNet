@@ -34,8 +34,8 @@ class NamecardsFragment : Fragment() {
     private var role = "All roles"
     private var industry = "All industries"
 
-    // TODO: Link to actual data
-    private var arrNamecard: ArrayList<Namecard> = ArrayList()
+    @RequiresApi(Build.VERSION_CODES.M)
+    private var arrNamecard: ArraySet<Namecard> = ArraySet()
 
     // Scoped to the lifecycle of the fragment's view (between onCreateView and onDestroyView)
     private lateinit var fragmentNamecardsBinding: FragmentNamecardsBinding
@@ -194,12 +194,14 @@ class NamecardsFragment : Fragment() {
 
     private fun refreshList(){
         lvNamecards = fragmentNamecardsBinding.lvNamecards
-        lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
+        var list = ArrayList<Namecard>(arrNamecard)
+        lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, list) }
     }
 
     private fun applyFilter(){
         if (role == "All roles" && industry == "All industries"){
-            lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, arrNamecard) }
+            var list = ArrayList<Namecard>(arrNamecard)
+            lvNamecards.adapter = this.activity?.let { NamecardAdapter(it, list) }
         } else {
             var arrNamecardFiltered: ArrayList<Namecard> = ArrayList()
             for (namecard in arrNamecard){
